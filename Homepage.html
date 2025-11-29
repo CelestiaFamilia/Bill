@@ -17,7 +17,7 @@
     </div>
 
     <!-- Dashboard: stays on current page -->
-    <a href="index.html" class="nav-item" style="text-decoration: none; color: white;">
+    <a href="Homepage.html" class="nav-item" style="text-decoration: none; color: white;">
       <span class="nav-icon">📊</span>
       <span>Dashboard</span>
     </a>
@@ -181,6 +181,16 @@
     </div>
   </div>
 
+  <!-- Limit Exceeded Warning Modal -->
+<div class="limit-warning-modal" id="limit-warning-modal">
+  <div class="limit-warning-content">
+    <div class="modal-title">⚠️ Daily Limit Exceeded!</div>
+    <p style="text-align: center; margin: 15px 0; font-size: 16px; color: #e74c3c;">
+      You've spent ₱<span id="excess-amount">0</span> over your ₱<span id="limit-value-display">200</span> limit today.
+    </p>
+    <button class="btn" id="close-warning-modal" style="background: #CB4040;">Got it</button>
+  </div>
+</div>
   <!-- ✅ Link to JavaScript at the END of body -->
   <script src="Homepage.js"></script>
 </body>

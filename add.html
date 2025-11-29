@@ -14,10 +14,12 @@
     <div class="input-group">
       <label for="date">Date</label>
       <input type="date" id="date" />
+      <div class="error-msg" id="date-error"></div>
     </div>
     <div class="input-group">
       <label for="amount">Amount (₱)</label>
       <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" />
+      <div class="error-msg" id="amount-error"></div>
     </div>
     <div class="input-group">
       <label for="category">Category</label>
@@ -28,6 +30,7 @@
         <option value="transport">Transportation</option>
         <option value="load">Load/Subscription</option>
       </select>
+      <div class="error-msg" id="category-error"></div>
     </div>
     <button id="save-btn">Add Spending</button>
     <a href="Homepage.html" class="back-link">← Back to Dashboard</a>

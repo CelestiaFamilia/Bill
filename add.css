@@ -1,0 +1,86 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(112.68deg, #030060 0%, #22B868 100%);
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 28px;
+      padding: 30px;
+      width: 90%;
+      max-width: 450px;
+    }
+    .header {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 25px;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.1);
+      color: white;
+      font-size: 16px;
+    }
+    input::placeholder { color: rgba(255,255,255,0.7); }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #030060;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #22B868;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #a0d8ff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    body.dark-mode {
+    background: linear-gradient(112.68deg, #121212 0%, #0a0a0a 100%) !important;
+    color: #fff !important;
+    }
+    body.light-mode {
+        background: linear-gradient(112.68deg, #030060 0%, #22B868 100%) !important;
+        color: white !important;
+    }
+
+    /* Optional: make inputs/buttons adapt in light mode */
+    body.light-mode input,
+    body.light-mode .card {
+        background: rgba(255,255,255,0.25) !important;
+        color: white !important;
+        border-color: rgba(255,255,255,0.3) !important;
+    }

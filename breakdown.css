@@ -1,0 +1,99 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(112.68deg, #030060 0%, #22B868 100%);
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      font-size: 28px;
+      margin: 20px 0;
+    }
+    .date-picker {
+      background: rgba(255,255,255,0.25);
+      border-radius: 28px;
+      padding: 12px 20px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+      align-items: center;
+    }
+    .date-picker label {
+      font-weight: 500;
+    }
+    #date-select {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .summary {
+      background: rgba(255,255,255,0.25);
+      border-radius: 28px;
+      padding: 20px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .total-label {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .total-value {
+      font-size: 42px;
+      font-weight: 300;
+    }
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .item {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+    }
+    .color-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      color: #a0d8ff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    body.dark-mode {
+    background: linear-gradient(112.68deg, #121212 0%, #0a0a0a 100%) !important;
+    color: #fff !important;
+    }
+    body.light-mode {
+        background: linear-gradient(112.68deg, #030060 0%, #22B868 100%) !important;
+        color: white !important;
+    }
+
+    /* Optional: make inputs/buttons adapt in light mode */
+    body.light-mode input,
+    body.light-mode .card {
+        background: rgba(255,255,255,0.25) !important;
+        color: white !important;
+        border-color: rgba(255,255,255,0.3) !important;
+    }

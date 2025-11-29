@@ -68,9 +68,43 @@
     .back-link:hover {
       text-decoration: underline;
     }
+    .success-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1050;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .success-modal-content {
+      background: rgba(255, 255, 255, 0.95);
+      color: black;
+      padding: 30px;
+      border-radius: 20px;
+      width: 400px;
+      max-width: 90%;
+      text-align: center;
+    }
+    /* Dark mode: Make select background dark and text white */
+    body.dark-mode select {
+      background: #1a1a1a !important; /* Near-black */
+      color: white !important;
+      border-color: #555 !important;
+    }
     body.dark-mode {
     background: linear-gradient(112.68deg, #121212 0%, #0a0a0a 100%) !important;
     color: #fff !important;
+    }
+
+    body.light-mode select {
+      background: #1a1a1a !important; /* Near-black */
+      color: white !important;
+      border-color: #555 !important;
     }
     body.light-mode {
         background: linear-gradient(112.68deg, #030060 0%, #22B868 100%) !important;

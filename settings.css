@@ -1,0 +1,270 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background: linear-gradient(112.68deg, #030060 0%, #22B868 100%);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    transition: background 0.3s ease;
+  }
+  
+  /* Dark Mode */
+  body.dark-mode {
+    background: linear-gradient(112.68deg, #121212 0%, #0a0a0a 100%);
+  }
+  
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .header {
+    text-align: center;
+    font-size: 28px;
+    margin: 20px 0;
+  }
+  
+  .card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 28px;
+    padding: 25px;
+    margin-bottom: 25px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  
+  .field {
+    margin-bottom: 18px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.1);
+    color: white;
+    font-size: 16px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 14px;
+    background: #030060;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  button:hover {
+    background: #22B868;
+  }
+  
+  #logout-btn {
+    background: #CB4040;
+    margin-top: 10px;
+  }
+  
+  #logout-btn:hover {
+    background: #e05a5a;
+  }
+  
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #a0d8ff;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  /* Profile Image Upload */
+  .profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .profile-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: 2px dashed #ccc;
+  }
+  
+  .profile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .image-upload-btn {
+    background: #030060;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .image-upload-btn:hover {
+    background: #22B868;
+  }
+  
+  .file-input {
+    display: none;
+  }
+  
+  /* Toggle Switch for Light/Dark Mode */
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .toggle-label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.2);
+    transition: 0.4s;
+    border-radius: 24px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background: #22B868;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  /* Dark mode overrides */
+  body.dark-mode .card {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  body.dark-mode input {
+    background: rgba(50, 50, 50, 0.5);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  body.dark-mode .slider {
+    background: rgba(200, 200, 200, 0.3);
+  }
+  
+  body.dark-mode .slider:before {
+    background: #fff;
+  }
+  
+  body.dark-mode .image-upload-btn {
+    background: #333;
+  }
+  
+  body.dark-mode .image-upload-btn:hover {
+    background: #555;
+  }
+  
+  /* Notification Modal */
+  .notification-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  
+  .notification-modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .notification-content {
+    background: rgba(255, 255, 255, 0.95);
+    color: #030060;
+    padding: 20px 30px;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+  
+  body.dark-mode .notification-content {
+    background: rgba(30, 30, 30, 0.95);
+    color: #22B868;
+  }

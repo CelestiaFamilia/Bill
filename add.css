@@ -90,6 +90,15 @@
       max-width: 90%;
       text-align: center;
     }
+
+    .error-msg {
+      min-height: 20px;
+      font-size: 14px;
+      color: #ff6b6b;
+      margin-top: 5px;
+      display: none; /* Hidden by default */
+    }
+    
     /* Dark mode: Make select background dark and text white */
     body.dark-mode select {
       background: #1a1a1a !important; /* Near-black */

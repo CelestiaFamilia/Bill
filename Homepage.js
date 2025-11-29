@@ -298,11 +298,23 @@ saveBtn.addEventListener('click', () => {
   addModal.style.display = 'none';
 });
 
-// Update spending display
 function updateSpendingDisplay() {
   const data = spendingData[currentDate];
-  totalSpentEl.textContent = data.total.toFixed(0);
-  todayTotalEl.textContent = data.total.toFixed(0);
+  const total = data.total;
+  const limit = data.dailyLimit;
+
+  totalSpentEl.textContent = total.toFixed(0);
+  todayTotalEl.textContent = total.toFixed(0);
+
+  // Apply or remove red warning based on limit
+  const todayValueEl = document.getElementById('today-total');
+  if (total > limit) {
+    todayValueEl.classList.add('warning-red');
+    showLimitExceededWarning();
+  } else {
+    todayValueEl.classList.remove('warning-red');
+    hideLimitExceededWarning();
+  }
 }
 
 // Draw pie chart with percentages
@@ -436,11 +448,11 @@ window.addEventListener('click', (e) => {
   }
 });
 (function applyTheme() {
-const savedTheme = localStorage.getItem('theme') || 'dark';
-document.body.className = document.body.className
-  .replace(/\b(light-mode|dark-mode)\b/g, '')
-  .trim();
-document.body.classList.add(savedTheme + '-mode');
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.body.className = document.body.className
+    .replace(/\b(light-mode|dark-mode)\b/g, '')
+    .trim();
+  document.body.classList.add(savedTheme + '-mode');
 })();
 // Logout Confirmation
 const logoutBtn = document.getElementById('logout-btn');
@@ -471,6 +483,35 @@ confirmLogoutBtn.addEventListener('click', () => {
 logoutModal.addEventListener('click', (e) => {
   if (e.target === logoutModal) {
     logoutModal.style.display = 'none';
+  }
+});
+
+const limitWarningModal = document.getElementById('limit-warning-modal');
+const closeWarningModalBtn = document.getElementById('close-warning-modal');
+const excessAmountEl = document.getElementById('excess-amount');
+const limitValueDisplayEl = document.getElementById('limit-value-display');
+
+function showLimitExceededWarning() {
+  const data = spendingData[currentDate];
+  const excess = data.total - data.dailyLimit;
+  excessAmountEl.textContent = excess.toFixed(0);
+  limitValueDisplayEl.textContent = data.dailyLimit.toFixed(0);
+  limitWarningModal.style.display = 'flex';
+}
+
+function hideLimitExceededWarning() {
+  limitWarningModal.style.display = 'none';
+}
+
+// Close warning modal
+closeWarningModalBtn?.addEventListener('click', () => {
+  hideLimitExceededWarning();
+});
+
+// Close if clicking outside
+limitWarningModal?.addEventListener('click', (e) => {
+  if (e.target === limitWarningModal) {
+    hideLimitExceededWarning();
   }
 });
 

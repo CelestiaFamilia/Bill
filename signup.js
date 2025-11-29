@@ -18,7 +18,7 @@
   
     if (isSuccess) {
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = 'signin.html';
       }, 1200);
     }
   }

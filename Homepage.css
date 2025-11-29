@@ -1,0 +1,705 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: linear-gradient(112.68deg, #030060 0%, #22B868 100%);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 450px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    padding: 30px;
+    margin: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    /* Add gradient to match reference */
+    background: linear-gradient(180deg, #3A4D8C 0%, #2A3D90 100%);
+  }
+
+  /* Profile Header - Match Reference Design */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(217, 217, 217, 0.25);
+    border-radius: 28px;
+    cursor: pointer;
+    position: relative;
+    /* Make it look like the reference */
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: url('https://via.placeholder.com/60/FF69B4/ffffff?text=K') center/cover no-repeat;
+    border: 2px solid white;
+  }
+
+  .username {
+    font-size: 38px;
+    font-weight: 300;
+  }
+
+  .edit-icon {
+    margin-left: auto;
+    opacity: 0.7;
+    cursor: pointer;
+  }
+
+  /* Navigation Items - Match Reference Design */
+  .nav-item {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-icon {
+    font-size: 24px;
+  }
+
+  /* Profile Modal - Now positioned on sidebar side */
+  .profile-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 50px;
+  }
+
+  .profile-modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .profile-field {
+    margin-bottom: 15px;
+  }
+
+  .field-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  /* Profile Image Upload */
+  .profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .profile-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: 2px dashed #ccc;
+  }
+
+  .profile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-upload-btn {
+    background: #030060;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .image-upload-btn:hover {
+    background: #22B868;
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    background: #030060;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .btn:hover {
+    background: #22B868;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 100vh;
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .header-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .date-picker-container {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .date-picker-label {
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  #date-picker {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 300;
+    font-family: 'Poppins', sans-serif;
+    width: 160px;
+  }
+
+  #date-picker::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+  }
+
+  .daily-limit {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    padding: 15px;
+    width: 280px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .limit-title {
+    font-size: 25px;
+    font-weight: 300;
+    margin-bottom: 10px;
+  }
+
+  .limit-value {
+    font-size: 48px;
+    font-weight: 300;
+  }
+
+  .quick-add {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    padding: 15px;
+    width: 800px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .add-btn {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #000;
+    cursor: pointer;
+  }
+
+  .add-text {
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  /* Analytics Card */
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    padding: 15px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-grow: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
+  /* Combined Pie Chart and Daily Limit Container */
+  .pie-container {
+    width: 240px;
+    height: 650px; /* Increased height to accommodate daily limit */
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align content to top */
+    position: relative;
+    padding-top: 20px; /* Space at top for daily limit */
+  }
+
+  .daily-limit-in-pie {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    padding: 15px;
+    width: 220px;
+    margin-bottom: 15px;
+    cursor: pointer;
+  }
+
+  .daily-limit-title {
+    font-size: 20px;
+    font-weight: 300;
+    margin-bottom: 5px;
+  }
+
+  .daily-limit-value {
+    font-size: 36px;
+    font-weight: 300;
+  }
+
+  .pie-chart-canvas {
+    width: 210px;
+    height: 210px;
+    margin-top: 10px;
+  }
+
+  .chart-title {
+    font-size: 25px;
+    font-weight: 300;
+    margin-bottom: 10px;
+  }
+
+  .total-spent {
+    font-size: 18px;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Breakdown Container (now includes bar graph) */
+  .breakdown {
+    width: 850px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-grow: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .breakdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .breakdown-title {
+    font-size: 25px;
+    font-weight: 300;
+  }
+
+  .selected-date-container {
+    background: linear-gradient(255.85deg, #00D9FF 3.21%, #2A3D90 97.35%);
+    border-radius: 28px;
+    padding: 15px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .selected-date-title {
+    font-size: 25px;
+    font-weight: 300;
+  }
+
+  .selected-date-value {
+    font-size: 48px;
+    font-weight: 300;
+  }
+
+  .breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .color-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+  }
+
+  .remove-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .remove-btn:hover {
+    opacity: 1;
+  }
+
+  /* Bar Graph inside Breakdown */
+  .bar-graph-container {
+    background: linear-gradient(255.85deg, #00D9FF 3.21%, #2A3D90 97.35%);
+    border-radius: 28px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+    flex-grow: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .graph-title {
+    font-size: 25px;
+    font-weight: 300;
+  }
+
+  .bars-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 100px;
+    height: 150px;
+    padding: 8px;
+    justify-content: center;
+  }
+
+  .bar {
+    width: 100px;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    transition: height 0.5s ease;
+    position: relative;
+  }
+
+  .bar-label {
+    position: absolute;
+    bottom: -35px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar-percentage {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  /* Add Spending Modal */
+  .add-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .add-modal-content {
+    background: rgba(255,255,255,0.95);
+    color: black;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90%;
+  }
+
+  .add-modal-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .category-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background: white;
+  }
+
+  .save-btn {
+    width: 100%;
+    padding: 12px;
+    background: #030060;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .save-btn:hover {
+    background: #22B868;
+  }
+
+  .daily-limit-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .daily-limit-modal-content {
+    background: rgba(255,255,255,0.95);
+    color: black;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90%;
+  }
+
+  .daily-limit-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .daily-limit-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .update-btn {
+    width: 100%;
+    padding: 12px;
+    background: #030060;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .update-btn:hover {
+    background: #22B868;
+  }
+  /* Logout Modal */
+  .logout-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1100;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logout-modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    color: #333;
+  }
+
+  body.dark-mode .logout-modal-content {
+    background: rgba(30, 30, 40, 0.95);
+    color: #f0f0f0;
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .sidebar {
+      width: 300px;
+    }
+    .header-row {
+      flex-direction: column;
+    }
+    .daily-limit, .quick-add, .date-picker-container {
+      width: 100%;
+    }
+    .breakdown {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    body {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 100%;
+      margin: 10px;
+    }
+    .main-content {
+      padding: 10px;
+    }
+    
+    .bars-container {
+      height: 120px;
+    }
+    
+    .bar {
+      width: 40px;
+    }
+    
+    /* On mobile, center the profile modal */
+    .profile-modal {
+      padding-left: 0;
+      justify-content: center;
+    }
+  }
+  /* Modal text color adapts to theme */
+  body.light-mode .profile-modal-content,
+  body.light-mode .add-modal-content,
+  body.light-mode .daily-limit-modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333; /* Dark gray for light mode — readable on white */
+  }
+
+  body.dark-mode .profile-modal-content,
+  body.dark-mode .add-modal-content,
+  body.dark-mode .daily-limit-modal-content {
+    background: rgba(30, 30, 40, 0.95);
+    color: #f0f0f0; /* Light text for dark mode */
+  

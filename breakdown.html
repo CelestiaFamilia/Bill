@@ -1,0 +1,193 @@
+<!-- breakdown.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spending Breakdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(112.68deg, #030060 0%, #22B868 100%);
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      font-size: 28px;
+      margin: 20px 0;
+    }
+    .date-picker {
+      background: rgba(255,255,255,0.25);
+      border-radius: 28px;
+      padding: 12px 20px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+      align-items: center;
+    }
+    .date-picker label {
+      font-weight: 500;
+    }
+    #date-select {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .summary {
+      background: rgba(255,255,255,0.25);
+      border-radius: 28px;
+      padding: 20px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .total-label {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .total-value {
+      font-size: 42px;
+      font-weight: 300;
+    }
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .item {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+    }
+    .color-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      color: #a0d8ff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    body.dark-mode {
+    background: linear-gradient(112.68deg, #121212 0%, #0a0a0a 100%) !important;
+    color: #fff !important;
+    }
+    body.light-mode {
+        background: linear-gradient(112.68deg, #030060 0%, #22B868 100%) !important;
+        color: white !important;
+    }
+
+    /* Optional: make inputs/buttons adapt in light mode */
+    body.light-mode input,
+    body.light-mode .card {
+        background: rgba(255,255,255,0.25) !important;
+        color: white !important;
+        border-color: rgba(255,255,255,0.3) !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Spending Breakdown</div>
+
+    <div class="date-picker">
+      <label for="date-select">View Date:</label>
+      <input type="date" id="date-select" />
+    </div>
+
+    <div class="summary">
+      <div class="total-label">Total Spent Today</div>
+      <div class="total-value">₱<span id="total-spent">0</span></div>
+    </div>
+
+    <div class="breakdown-list" id="breakdown-list">
+      <!-- Items loaded by JS -->
+    </div>
+
+    <a href="index.html" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    const categories = [
+      { key: 'food', label: 'Food', color: '#18C80E' },
+      { key: 'groceries', label: 'Groceries', color: '#F07DF2' },
+      { key: 'transport', label: 'Transportation', color: '#CB4040' },
+      { key: 'load', label: 'Load/Subscription', color: '#F49415' }
+    ];
+
+    const dateInput = document.getElementById('date-select');
+    const totalSpentEl = document.getElementById('total-spent');
+    const breakdownListEl = document.getElementById('breakdown-list');
+
+    // Set today
+    const now = new Date();
+    dateInput.valueAsDate = now;
+
+    function loadSpendingForDate(dateStr) {
+      const spendingData = JSON.parse(localStorage.getItem('spendingDataV2')) || {};
+      const data = spendingData[dateStr] || {
+        food: 0, groceries: 0, transport: 0, load: 0, total: 0
+      };
+
+      totalSpentEl.textContent = data.total.toFixed(2);
+
+      breakdownListEl.innerHTML = '';
+      categories.forEach(cat => {
+        const value = data[cat.key] || 0;
+        if (value > 0) {
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <div class="item-name">
+              <div class="color-dot" style="background:${cat.color}"></div>
+              ${cat.label}
+            </div>
+            <div>₱${value.toFixed(2)}</div>
+          `;
+          breakdownListEl.appendChild(item);
+        }
+      });
+
+      if (breakdownListEl.children.length === 0) {
+        breakdownListEl.innerHTML = '<div style="text-align:center; padding:20px; opacity:0.8;">No spending recorded.</div>';
+      }
+    }
+
+    dateInput.addEventListener('change', (e) => {
+      loadSpendingForDate(e.target.value);
+    });
+
+    // Load initial data
+    loadSpendingForDate(dateInput.value);
+    (function applyTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.className = document.body.className
+      .replace(/\b(light-mode|dark-mode)\b/g, '')
+      .trim();
+    document.body.classList.add(savedTheme + '-mode');
+  })();
+  </script>
+</body>
+</html>

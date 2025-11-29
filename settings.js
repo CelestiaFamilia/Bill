@@ -72,7 +72,7 @@ const userData = JSON.parse(localStorage.getItem('userData')) || {
     // Auto-close after 3 seconds
     setTimeout(() => {
       modal.classList.remove('show');
-    }, 3000);
+    }, 1500);
   
     // Close on click (once)
     modal.addEventListener('click', () => {
@@ -114,11 +114,7 @@ const userData = JSON.parse(localStorage.getItem('userData')) || {
     localStorage.setItem('spendingDataV2', JSON.stringify(updatedSpending));
   
     showNotification('Settings saved!');
-  
-    // Redirect after delay
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1000);
+
   });
   
   // Theme toggle
@@ -153,5 +149,5 @@ const userData = JSON.parse(localStorage.getItem('userData')) || {
     localStorage.removeItem('spendingDataV2');
     
     // Redirect without alert
-    window.location.href = 'landingpage.html';
+    window.location.href = 'index.html';
   });

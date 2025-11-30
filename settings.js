@@ -142,12 +142,17 @@ const userData = JSON.parse(localStorage.getItem('userData')) || {
     }
   });
   
-  // Logout
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userData');
-    localStorage.removeItem('spendingDataV2');
-    
-    // Redirect without alert
+// Logout
+document.getElementById('logout-btn').addEventListener('click', () => {
+  // ✅ Only remove login session — keep account & data
+  localStorage.removeItem('isLoggedIn');
+  
+  // Optional: Keep userData and spendingData so user can log in again
+  
+  showNotification('Logged out successfully!');
+  
+  // Redirect after short delay
+  setTimeout(() => {
     window.location.href = 'index.html';
-  });
+  }, 1000);
+});

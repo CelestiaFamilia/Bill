@@ -730,7 +730,82 @@ body.dark-mode {
 }
 
 /* Optional: Make translucent elements adapt too */
-body.dark-mode .sidebar,
+body.dark-mode .sidebar {
+  background: #1e1e28 !important; /* Deep navy */
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode .profile-header {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode .username {
+  color: #ffffff !important;
+  font-weight: 400 !important; /* Slightly bolder for readability */
+}
+
+body.dark-mode .nav-item {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .nav-item:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.dark-mode .edit-icon {
+  color: #ffffff !important;
+  opacity: 0.8 !important;
+}
+
+/* --- PROFILE MODAL --- */
+body.dark-mode .profile-modal-content {
+  background: #1e1e28 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .profile-field .field-label {
+  color: #ffffff !important;
+}
+
+body.dark-mode .profile-field .field-input {
+  background: #2a2a3a !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode .btn {
+  background: #030060 !important;
+  color: white !important;
+}
+
+body.dark-mode .btn:hover {
+  background: #22B868 !important;
+}
+
+body.dark-mode .image-upload-btn {
+  background: #030060 !important;
+  color: white !important;
+}
+
+body.dark-mode .image-upload-btn:hover {
+  background: #22B868 !important;
+} 
+
+/* Ensure all text inside is white */
+body.dark-mode .sidebar .username,
+body.dark-mode .sidebar .nav-item,
+body.dark-mode .sidebar .nav-item span,
+body.dark-mode .sidebar .profile-header,
+body.dark-mode .edit-icon {
+  color: white !important;
+  opacity: 1 !important;
+}
+
+
 body.dark-mode .analytics-card,
 body.dark-mode .breakdown,
 body.dark-mode .pie-container,

@@ -1,65 +1,127 @@
 // Apply saved theme on page load
 (function applyTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.body.classList.add(savedTheme + '-mode');
-  })();
-  
-  // Modal elements
-  const modal = document.getElementById('message-modal');
-  const modalTitle = document.getElementById('modal-title');
-  const modalText = document.getElementById('modal-text');
-  const modalClose = document.getElementById('modal-close');
-  
-  // Show modal with optional auto-redirect on success
-  function showModal(title, message, isSuccess = false) {
-    modalTitle.textContent = title;
-    modalText.textContent = message;
-    modal.style.display = 'flex';
-  
-    if (isSuccess) {
-      setTimeout(() => {
-        window.location.href = 'signin.html';
-      }, 1200);
-    }
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.body.classList.add(savedTheme + '-mode');
+})();
+
+// Get DOM elements
+const nameInput = document.getElementById('name');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const signupBtn = document.getElementById('signup-btn');
+
+// Error message elements
+const nameError = document.getElementById('name-error');
+const emailError = document.getElementById('email-error');
+const passwordError = document.getElementById('password-error');
+
+// Validation functions
+function showError(element, message) {
+  element.textContent = message;
+  element.style.display = 'block';
+  element.parentElement.querySelector('input').classList.add('invalid');
+}
+
+function clearError(element) {
+  element.textContent = '';
+  element.style.display = 'none';
+  element.parentElement.querySelector('input').classList.remove('invalid');
+}
+
+function validateName() {
+  const value = nameInput.value.trim();
+  if (!value) {
+    showError(nameError, 'Please enter your name');
+    return false;
   }
+  clearError(nameError);
+  return true;
+}
+
+function validateEmail() {
+  const value = emailInput.value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!value) {
+    showError(emailError, 'Please enter your email');
+    return false;
+  }
+  if (!emailRegex.test(value)) {
+    showError(emailError, 'Please enter a valid email address');
+    return false;
+  }
+  clearError(emailError);
+  return true;
+}
+
+function validatePassword() {
+  const value = passwordInput.value;
+  if (!value) {
+    showError(passwordError, 'Please enter a password');
+    return false;
+  }
+  if (value.length < 6) {
+    showError(passwordError, 'Password must be at least 6 characters');
+    return false;
+  }
+  clearError(passwordError);
+  return true;
+}
+
+// Password visibility toggle
+const togglePasswordBtn = document.getElementById('toggle-password');
+let isPasswordVisible = false;
+
+togglePasswordBtn.addEventListener('click', () => {
+  isPasswordVisible = !isPasswordVisible;
   
-  // Close modal
-  modalClose.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-  
-  // Close modal when clicking outside
-  window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
-  
-  // Sign-up handler
-  document.getElementById('signup-btn').addEventListener('click', () => {
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-  
-    if (!name || !email || password.length < 6) {
-      showModal(
-        'Invalid Input',
-        'Please fill all fields correctly. Password must be at least 6 characters.'
-      );
-      return;
-    }
-  
+  if (isPasswordVisible) {
+    passwordInput.type = 'text';
+    togglePasswordBtn.textContent = '🙈'; // Hide
+  } else {
+    passwordInput.type = 'password';
+    togglePasswordBtn.textContent = '👁️'; // Show
+  }
+});
+
+// Real-time validation as user types
+nameInput.addEventListener('blur', validateName);
+emailInput.addEventListener('blur', validateEmail);
+passwordInput.addEventListener('blur', validatePassword);
+
+nameInput.addEventListener('input', () => {
+  if (nameInput.value.trim()) clearError(nameError);
+});
+
+emailInput.addEventListener('input', () => {
+  if (emailInput.value.trim()) clearError(emailError);
+});
+
+passwordInput.addEventListener('input', () => {
+  if (passwordInput.value.length >= 6) clearError(passwordError);
+});
+
+// Sign-up handler
+signupBtn.addEventListener('click', () => {
+  const isNameValid = validateName();
+  const isEmailValid = validateEmail();
+  const isPasswordValid = validatePassword();
+
+  // If all fields are valid
+  if (isNameValid && isEmailValid && isPasswordValid) {
     // Save minimal user data (no password stored for demo)
     localStorage.setItem('userData', JSON.stringify({
-      name,
-      email,
+      name: nameInput.value.trim(),
+      email: emailInput.value.trim(),
       gender: 'Not set',
       birthday: '',
       phone: '',
       address: '',
       profileImage: null
     }));
-  
+
     localStorage.setItem('isLoggedIn', 'true');
-    showModal('Success!', 'Account created successfully!', true);
-  });
+
+    // Redirect to sign-in page after success
+    window.location.href = 'signin.html';
+  }
+});

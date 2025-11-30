@@ -9,28 +9,46 @@
 </head>
 <body>
   <div class="card">
-    <div class="header">Sign In</div>
+    <!-- Header with Back Button -->
+    <div class="header-container">
+      <a href="index.html" class="back-btn">←</a>
+      <h1 class="header">Sign In</h1>
+    </div>
+
     <div class="field">
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="your@email.com">
     </div>
-    <div class="field">
+    <div class="field password-field">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="••••••••">
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="••••••••">
+        <button type="button" class="toggle-password" id="toggle-password">👁️</button>
+      </div>
+      <a href="#" id="forgot-password" class="forgot-link">Forgot password?</a>
     </div>
     
     <button id="signin-btn">Sign In</button>
     <button class="signup-btn" onclick="window.location.href='signup.html'">Create Account</button>
-
-    <a href="index.html" class="back">← Back</a>
   </div>
 
-  <!-- Modal for messages -->
+  <!-- Message Modal -->
   <div class="modal" id="message-modal">
     <div class="modal-content">
       <h3 id="modal-title">Title</h3>
       <p id="modal-text">Message here.</p>
       <button class="btn" id="modal-close">Close</button>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal" id="forgot-modal">
+    <div class="modal-content">
+      <h3>Reset Password</h3>
+      <p>Enter your email and we’ll send you a link to reset your password.</p>
+      <input type="email" id="reset-email" placeholder="your@email.com" style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+      <button class="btn" id="send-reset">Send Reset Link</button>
+      <button class="btn cancel-btn" id="cancel-reset">Cancel</button>
     </div>
   </div>
 

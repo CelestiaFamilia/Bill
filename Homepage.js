@@ -454,29 +454,29 @@ window.addEventListener('click', (e) => {
     .trim();
   document.body.classList.add(savedTheme + '-mode');
 })();
-// Logout Confirmation
+
+
+// ===== LOGOUT HANDLING =====
 const logoutBtn = document.getElementById('logout-btn');
 const logoutModal = document.getElementById('logout-modal');
 const confirmLogoutBtn = document.getElementById('confirm-logout');
 const cancelLogoutBtn = document.getElementById('cancel-logout');
 
+// Show logout modal
 logoutBtn.addEventListener('click', () => {
   logoutModal.style.display = 'flex';
 });
 
+// Cancel logout
 cancelLogoutBtn.addEventListener('click', () => {
   logoutModal.style.display = 'none';
 });
 
+// Confirm logout (ONLY remove login status)
 confirmLogoutBtn.addEventListener('click', () => {
-  // Clear all user data
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('userData');
-  localStorage.removeItem('spendingDataV2');
-  
-  // Hide modal and redirect
+  localStorage.removeItem('isLoggedIn'); // ✅ Keeps all user data
   logoutModal.style.display = 'none';
-  window.location.href = 'landingpage.html';
+  window.location.href = 'signin.html'; // Redirect to sign-in page
 });
 
 // Close modal if clicking outside content

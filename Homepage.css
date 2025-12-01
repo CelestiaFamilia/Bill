@@ -334,12 +334,10 @@ body {
 
 .daily-limit-in-pie {
   background: rgba(255, 255, 255, 0.25);
-  border-radius: 28px;
-  padding: 15px;
-  width: 220px;
-  margin-top: 20px; 
   border-radius: 35px;
-  margin-bottom: 15px;
+  padding: 15px;
+  width: 190px; /* 👈 Reduced from 220px */
+  margin: 20px auto 15px; /* 👈 `auto` centers it horizontally */
   cursor: pointer;
 }
 
@@ -474,10 +472,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
   min-height: 170px; /* Increased from 160px to 170px */
   position: relative;
   overflow: hidden; /* Keeps everything contained */
+  margin-bottom: 20px;
 }
 
 .graph-title {

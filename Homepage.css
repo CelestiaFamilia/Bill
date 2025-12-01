@@ -15,14 +15,14 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 450px;
+  width: 380px;
   background: rgba(255, 255, 255, 0.25);
   border-radius: 28px;
-  padding: 30px;
-  margin: 30px;
+  padding: 24px;
+  margin: 24px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 28px;
   /* Add gradient to match reference */
   background: linear-gradient(180deg, #3A4D8C 0%, #2A3D90 100%);
 }
@@ -31,8 +31,8 @@ body {
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px;
+  gap: 12px;
+  padding: 12px;
   background: rgba(217, 217, 217, 0.25);
   border-radius: 28px;
   cursor: pointer;
@@ -41,6 +41,7 @@ body {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
+  width: 100%;
 }
 
 .avatar {
@@ -52,8 +53,13 @@ body {
 }
 
 .username {
-  font-size: 38px;
+  font-size: 30px;
   font-weight: 300;
+  max-width: 180px; /* Adjust based on available space */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
 .edit-icon {
@@ -66,10 +72,10 @@ body {
 .nav-item {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 30px;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   cursor: pointer;
   transition: background 0.3s;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -81,7 +87,7 @@ body {
 }
 
 .nav-icon {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 /* Profile Modal - Now positioned on sidebar side */
@@ -232,7 +238,7 @@ body {
 }
 
 .date-picker-label {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 300;
 }
 
@@ -240,10 +246,10 @@ body {
   background: transparent;
   border: none;
   color: white;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 300;
   font-family: 'Poppins', sans-serif;
-  width: 160px;
+  width: 140px;
 }
 
 #date-picker::-webkit-calendar-picker-indicator {
@@ -289,7 +295,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 26px;
   color: #000;
   cursor: pointer;
 }
@@ -303,9 +309,9 @@ body {
 .analytics-card {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 25px;
-  padding: 15px;
+  padding: 12px;
   display: flex;
-  gap: 20px;
+  gap: 16px;
   align-items: center;
   flex-grow: 1;
   min-height: 0;
@@ -314,8 +320,8 @@ body {
 
 /* Combined Pie Chart and Daily Limit Container */
 .pie-container {
-  width: 240px;
-  height: 650px; /* Increased height to accommodate daily limit */
+  width: 220px;
+  height: 600px; /* Increased height to accommodate daily limit */
   background: rgba(255, 255, 255, 0.15);
   border-radius: 25px;
   display: flex;
@@ -331,25 +337,29 @@ body {
   border-radius: 28px;
   padding: 15px;
   width: 220px;
+  margin-top: 20px; 
+  border-radius: 35px;
   margin-bottom: 15px;
   cursor: pointer;
 }
 
+
 .daily-limit-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 300;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .daily-limit-value {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 300;
 }
 
+
 .pie-chart-canvas {
-  width: 210px;
-  height: 210px;
-  margin-top: 10px;
+  width: 190px;
+  height: 190px;
+  margin-top: 8px;
 }
 
 .chart-title {
@@ -366,13 +376,13 @@ body {
 
 /* Breakdown Container (now includes bar graph) */
 .breakdown {
-  width: 850px;
+  width: 780px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 25px;
-  padding: 15px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
   flex-grow: 1;
   min-height: 0;
   height: 100%;
@@ -404,28 +414,41 @@ body {
 }
 
 .selected-date-value {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 300;
 }
 
 .breakdown-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
   font-size: 18px;
-  font-weight: 300;
+  font-weight: 400;
+  min-height: 180px; /* 👈 INCREASED to fit 4+ items */
+  max-height: 300px; /* Optional: prevent huge overflow if many items */
+  overflow-y: auto; /* Add scroll if needed */
 }
 
 .breakdown-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
+  padding: 10px 0;
 }
 
 .color-dot {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.breakdown-item div:nth-child(2) {
+  flex: 1;
+  overflow: hidden;
 }
 
 .remove-btn {
@@ -443,52 +466,50 @@ body {
   opacity: 1;
 }
 
-/* Bar Graph inside Breakdown */
+/* --- BAR GRAPH (SMALLER) --- */
 .bar-graph-container {
   background: linear-gradient(255.85deg, #00D9FF 3.21%, #2A3D90 97.35%);
-  border-radius: 28px;
-  padding: 15px;
+  border-radius: 20px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 15px;
-  flex-grow: 1;
-  min-height: 0;
-  height: 100%;
+  gap: 8px;
+  margin-top: 16px;
+  min-height: 170px; /* Increased from 160px to 170px */
+  position: relative;
+  overflow: hidden; /* Keeps everything contained */
 }
 
 .graph-title {
-  font-size: 25px;
-  font-weight: 300;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  color: white;
+  margin: 0;
 }
 
 .bars-container {
   display: flex;
   align-items: flex-end;
-  gap: 100px;
-  height: 150px;
-  padding: 8px;
-  justify-content: center;
+  justify-content: space-around;
+  gap: 10px;
+  height: 80px; /* Reduced height for compactness */
+  padding: 0 10px;
+  overflow: visible; /* Allow labels to extend slightly if needed */
+  margin-top: 12px; 
 }
 
 .bar {
-  width: 100px;
+  width: 75px;
   background: white;
-  border-radius: 12px 12px 0 0;
+  border-radius: 8px 8px 0 0;
   transition: height 0.5s ease;
   position: relative;
-}
-
-.bar-label {
-  position: absolute;
-  bottom: -35px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 10px;
 }
 
 .bar-percentage {
@@ -497,9 +518,80 @@ body {
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: #333;
+  background: rgba(255,255,255,0.8);
+  border-radius: 4px;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -40px; /* Adjusted from -48px */
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap; /* 👈 Keep on one line */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Show ... if too long */
+  max-width: 60px; /* Match bar width */
+  margin: 0 auto;
+  padding: 0 2px;
+  line-height: 1.2;
+  height: 18px; /* Fixed height for consistency */
+}
+
+.bar-label:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap; /* Keep text in one line */
+  overflow: visible;
+  text-overflow: clip;
+  z-index: 10;
+  font-size: 12px;
+  max-width: none;
+  min-width: auto; /* 👈 Allows shrink-to-fit */
+  display: inline-block; /* 👈 Critical: makes width wrap content */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  position: relative; /* Needed for ::after arrow if used */
+}
+
+.spending-category-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.category-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+  margin: 0 0 4px 12px;
+  padding: 0;
+}
+
+.expenses-title {
+  font-size: 22px;
+  font-weight: 500;
+  margin: 8px 0 4px 0;
+  padding: 0 12px;
+}
+
+.category-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+  margin: 8px 0 4px 12px; /* Aligns with expense list padding */
+  padding: 0;
 }
 
 /* Add Spending Modal */
@@ -590,8 +682,8 @@ body {
 }
 
 .daily-limit-title {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 18px;
+  margin-bottom: 4px;
 }
 
 .daily-limit-input {
@@ -695,10 +787,10 @@ body.dark-mode .logout-modal-content {
   }
   .sidebar {
     width: 100%;
-    margin: 10px;
+    margin: 8px;
   }
   .main-content {
-    padding: 10px;
+    padding: 8px;
   }
   
   .bars-container {

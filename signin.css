@@ -236,3 +236,23 @@ body.dark-mode .modal p {
 body.dark-mode .modal .btn {
   color: white;
 }
+
+/* Dark mode improvements for visibility */
+body.dark-mode .card {
+  background: rgba(25, 25, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode input {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f0f0f0;
+}
+
+body.dark-mode label {
+  color: #e6e6e6;
+}
+
+body.dark-mode .forgot-link {
+  color: #66b3ff;
+}

@@ -379,37 +379,37 @@ function drawPieChart() {
   ctx.fillText(`₱${spendingData[currentDate].total}`, centerX, centerY + 8);
 }
 
-// Draw bar graph with percentages
 function drawBarGraph() {
   // Clear container
   barsContainer.innerHTML = '';
-  
+
   // Find maximum value for scaling
-  const maxValue = Math.max(...categories.map(cat => spendingData[currentDate][cat.key]), 1);
-  
-  // Create bars with percentages
+  const values = categories.map(cat => spendingData[currentDate][cat.key]);
+  const maxValue = Math.max(...values, 1); // Avoid division by zero
+
+  // Create bars
   categories.forEach(cat => {
     const value = spendingData[currentDate][cat.key];
-    const percentage = (value / maxValue) * 100;
-    // Minimum height of 10px for visibility
-    const height = Math.max(10, (percentage * 130) / 100);
-    
+    const percentageOfMax = (value / maxValue) * 100;
+    const maxHeight = 70; // Match .bars-container height
+    const height = Math.max(10, (percentageOfMax * maxHeight) / 100);
+
     const bar = document.createElement('div');
     bar.className = 'bar';
     bar.style.height = `${height}px`;
     bar.style.backgroundColor = cat.color;
-    
+
     // Add percentage label above the bar
     const percentageLabel = document.createElement('div');
     percentageLabel.className = 'bar-percentage';
     const barPercentage = spendingData[currentDate].total > 0 ? ((value / spendingData[currentDate].total) * 100).toFixed(1) : 0;
     percentageLabel.textContent = `${barPercentage}%`;
-    
-    // Add category label below the bar
+
+    // Inside drawBarGraph(), when creating label:
     const label = document.createElement('div');
     label.className = 'bar-label';
-    label.textContent = cat.label;
-    
+    label.textContent = cat.label; // Show full name
+
     bar.appendChild(percentageLabel);
     bar.appendChild(label);
     barsContainer.appendChild(bar);

@@ -186,15 +186,16 @@ button:hover {
 
 /* Dark mode support */
 body.dark-mode .card {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 30, 0.7); /* Dark gray with good opacity */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for definition */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); /* Optional: adds depth */
 }
 
 body.dark-mode input {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(20, 20, 20, 0.8); /* Slightly darker than card */
   color: #f0f0f0;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25); /* More visible border */
 }
-
 body.dark-mode input:focus {
   border-color: #22B868;
 }

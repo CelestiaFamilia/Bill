@@ -70,15 +70,16 @@ document.getElementById('signin-btn').addEventListener('click', () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value;
 
-  const userData = JSON.parse(localStorage.getItem('userData'));
+  const formData = new FormData();
+  formData.append('email',email);
+  formData.append('password',password);
 
-  if (userData && userData.email === email) {
-    localStorage.setItem('isLoggedIn', 'true');
-    showMessageModal('Success!', 'Signed in successfully!');
-    setTimeout(() => {
-      window.location.href = 'Homepage.html';
-    }, 1000);
-  } else {
-    showMessageModal('Account Not Found', 'Please sign up first.');
-  }
-});
+  fetch('login.php',{
+    method:'POST',
+    body: formData
+
+  })
+
+
+})
+ 

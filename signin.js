@@ -40,19 +40,42 @@ forgotLink.addEventListener('click', (e) => {
   forgotModal.style.display = 'flex';
 });
 
-// Send reset link (mock validation)
 sendReset.addEventListener('click', () => {
+  const originalText = sendReset.textContent;
+  sendReset.textContent = 'Sending...';
+  sendReset.disabled = true;
+
   const email = resetEmailInput.value.trim();
-  if (!email) {
-    showMessageModal('Error', 'Please enter your email address.');
-    return;
-  }
-  if (!email.includes('@') || !email.includes('.')) {
+  if (!email || !email.includes('@') || !email.includes('.')) {
     showMessageModal('Invalid Email', 'Please enter a valid email address.');
+    sendReset.textContent = originalText;
+    sendReset.disabled = false;
     return;
   }
-  showMessageModal('Check Your Email', `A password reset link has been sent to:\n\n${email}`);
-  forgotModal.style.display = 'none';
+
+  // Initialize EmailJS with your public user ID
+  emailjs.init("ocAs_7HayrthVPNkI");
+
+  const templateParams = {
+    user_email: email,
+    to_email: 'takanemanguilimotan@gmail.com',
+    reply_to: email
+  };
+
+  // ✅ Use the REAL template ID here (not the display name!)
+  emailjs.send('service_1tly9lo', 'template_ksd2uiy', templateParams)
+    .then(() => {
+      showMessageModal('Request Sent', `Admin has been notified for:\n${email}`);
+      forgotModal.style.display = 'none';
+    })
+    .catch((error) => {
+      console.error('EmailJS Error Details:', error);
+      showMessageModal('Failed', 'Could not send request. Check browser console (F12).');
+    })
+    .finally(() => {
+      sendReset.textContent = originalText;
+      sendReset.disabled = false;
+    });
 });
 
 // Password visibility toggle

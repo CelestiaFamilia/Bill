@@ -41,18 +41,41 @@ forgotLink.addEventListener('click', (e) => {
 });
 
 sendReset.addEventListener('click', () => {
+  const originalText = sendReset.textContent;
+  sendReset.textContent = 'Sending...';
+  sendReset.disabled = true;
+
   const email = resetEmailInput.value.trim();
   if (!email || !email.includes('@') || !email.includes('.')) {
     showMessageModal('Invalid Email', 'Please enter a valid email address.');
+    sendReset.textContent = originalText;
+    sendReset.disabled = false;
     return;
   }
 
-  // 🔗 Replace this with YOUR actual Google Form link
-  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeVMOBs3z3P0RIEjLvwFgzIg_hP3IUASCJpJTnf2oXwJ89f7Q/viewform?usp=dialog' + encodeURIComponent(email);
+  // Initialize EmailJS with your public user ID
+  emailjs.init("ocAs_7HayrthVPNkI");
 
-  window.open(formUrl, '_blank');
-  forgotModal.style.display = 'none';
-  showMessageModal('Help Request Sent', 'Please complete the form to request password help.');
+  const templateParams = {
+    user_email: email,
+    to_email: 'takanemanguilimotan@gmail.com',
+    reply_to: email
+  };
+
+  // ✅ Use the REAL template ID here (not the display name!)
+  emailjs.send('service_1tly9lo', 'template_ksd2uiy', templateParams)
+    .then(() => {
+      showMessageModal('Request Sent', `Admin has been notified for:\n${email}`);
+      forgotModal.style.display = 'none';
+    })
+    .catch((error) => {
+      console.error('EmailJS Error Details:', error);
+      showMessageModal('Failed', 'Could not send request. Check browser console (F12).');
+    })
+    .finally(() => {
+      sendReset.textContent = originalText;
+      sendReset.disabled = false;
+    });
 });
 
 // Password visibility toggle

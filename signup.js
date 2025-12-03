@@ -1,127 +1,138 @@
 // Apply saved theme on page load
 (function applyTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.body.classList.add(savedTheme + '-mode');
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  document.body.classList.add(savedTheme + "-mode");
 })();
 
-// Get DOM elements
+// DOM elements
+const form = document.getElementById('user_inputs');
 const nameInput = document.getElementById('name');
-const emailInput = document.getElementById('email');
+const emailOrPhoneInput = document.getElementById('email_or_phone');
 const passwordInput = document.getElementById('password');
+const confirmInput = document.getElementById('confirm_password');
 const signupBtn = document.getElementById('signup-btn');
 
-// Error message elements
 const nameError = document.getElementById('name-error');
 const emailError = document.getElementById('email-error');
 const passwordError = document.getElementById('password-error');
+const confirmError = document.getElementById('confirm-error');
 
-// Validation functions
 function showError(element, message) {
   element.textContent = message;
   element.style.display = 'block';
-  element.parentElement.querySelector('input').classList.add('invalid');
+  const input = element.parentElement.querySelector('input');
+  if (input) input.classList.add('invalid');
 }
-
 function clearError(element) {
   element.textContent = '';
   element.style.display = 'none';
-  element.parentElement.querySelector('input').classList.remove('invalid');
+  const input = element.parentElement.querySelector('input');
+  if (input) input.classList.remove('invalid');
+}
+
+function isValidEmail(val) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(val);
+}
+function isValidPhone(val) {
+  const digits = val.replace(/\D+/g, '');
+  return digits.length >= 7; // minimal check
 }
 
 function validateName() {
-  const value = nameInput.value.trim();
-  if (!value) {
+  const v = nameInput.value.trim();
+  if (!v) {
     showError(nameError, 'Please enter your name');
+    return false;
+  }
+  if (v.length < 2) {
+    showError(nameError, 'Name must be at least 2 characters');
     return false;
   }
   clearError(nameError);
   return true;
 }
 
-function validateEmail() {
-  const value = emailInput.value.trim();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!value) {
-    showError(emailError, 'Please enter your email');
+function validateEmailOrPhone() {
+  const v = emailOrPhoneInput.value.trim();
+  if (!v) {
+    showError(emailError, 'Please enter your email or phone');
     return false;
   }
-  if (!emailRegex.test(value)) {
-    showError(emailError, 'Please enter a valid email address');
-    return false;
+  if (isValidEmail(v)) {
+    clearError(emailError);
+    return true;
   }
-  clearError(emailError);
-  return true;
+  if (isValidPhone(v)) {
+    clearError(emailError);
+    return true;
+  }
+  showError(emailError, 'Enter a valid email or phone number');
+  return false;
 }
 
 function validatePassword() {
-  const value = passwordInput.value;
-  if (!value) {
+  const v = passwordInput.value;
+  if (!v) {
     showError(passwordError, 'Please enter a password');
     return false;
   }
-  if (value.length < 6) {
-    showError(passwordError, 'Password must be at least 6 characters');
+  if (v.length < 8) {
+    showError(passwordError, 'Password must be at least 8 characters');
     return false;
   }
   clearError(passwordError);
   return true;
 }
 
+function validateConfirm() {
+  if (confirmInput.value !== passwordInput.value) {
+    showError(confirmError, 'Passwords do not match');
+    return false;
+  }
+  clearError(confirmError);
+  return true;
+}
+
 // Password visibility toggle
 const togglePasswordBtn = document.getElementById('toggle-password');
 let isPasswordVisible = false;
-
-togglePasswordBtn.addEventListener('click', () => {
+togglePasswordBtn.addEventListener('click', (e) => {
+  e.preventDefault();
   isPasswordVisible = !isPasswordVisible;
-  
   if (isPasswordVisible) {
     passwordInput.type = 'text';
-    togglePasswordBtn.textContent = '🙈'; // Hide
+    confirmInput.type = 'text';
+    togglePasswordBtn.textContent = '🙈';
   } else {
     passwordInput.type = 'password';
-    togglePasswordBtn.textContent = '👁️'; // Show
+    confirmInput.type = 'password';
+    togglePasswordBtn.textContent = '👁️';
   }
 });
 
-// Real-time validation as user types
-nameInput.addEventListener('blur', validateName);
-emailInput.addEventListener('blur', validateEmail);
-passwordInput.addEventListener('blur', validatePassword);
+// Real-time validation
+nameInput.addEventListener('input', () => { if (nameInput.value.trim()) clearError(nameError); });
+emailOrPhoneInput.addEventListener('input', () => { if (emailOrPhoneInput.value.trim()) clearError(emailError); });
+passwordInput.addEventListener('input', () => { if (passwordInput.value.length >= 8) clearError(passwordError); });
+confirmInput.addEventListener('input', () => { if (confirmInput.value === passwordInput.value) clearError(confirmError); });
 
-nameInput.addEventListener('input', () => {
-  if (nameInput.value.trim()) clearError(nameError);
-});
+// Form submit handler
+form.addEventListener('signup-btn', function (e) {
+  // run validations
+  const nOK = validateName();
+  const eOK = validateEmailOrPhone();
+  const pOK = validatePassword();
+  const cOK = validateConfirm();
 
-emailInput.addEventListener('input', () => {
-  if (emailInput.value.trim()) clearError(emailError);
-});
-
-passwordInput.addEventListener('input', () => {
-  if (passwordInput.value.length >= 6) clearError(passwordError);
-});
-
-// Sign-up handler
-signupBtn.addEventListener('click', () => {
-  const isNameValid = validateName();
-  const isEmailValid = validateEmail();
-  const isPasswordValid = validatePassword();
-
-  // If all fields are valid
-  if (isNameValid && isEmailValid && isPasswordValid) {
-    // Save minimal user data (no password stored for demo)
-    localStorage.setItem('userData', JSON.stringify({
-      name: nameInput.value.trim(),
-      email: emailInput.value.trim(),
-      gender: 'Not set',
-      birthday: '',
-      phone: '',
-      address: '',
-      profileImage: null
-    }));
-
-    localStorage.setItem('isLoggedIn', 'true');
-
-    // Redirect to sign-in page after success
-    window.location.href = 'signin.html';
+  if (!(nOK && eOK && pOK && cOK)) {
+    e.preventDefault();
+    return;
   }
+
+  // disable button to prevent double submit
+  signupBtn.disabled = true;
+  signupBtn.textContent = 'Signing up...';
+
+  // let the form submit normally (server-side will do authoritative checks)
 });

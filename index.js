@@ -30,29 +30,3 @@
       }
     });
   });
-
-  // Form submission with modal
-  const form = document.getElementById('contact-form');
-  const modal = document.getElementById('success-modal');
-  const closeModalBtn = document.getElementById('close-modal');
-  const modalMessage = document.getElementById('modal-message');
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('name').value;
-    modalMessage.textContent = `Thank you, ${name}! We’ve received your message and will reply soon.`;
-    modal.style.display = 'flex';
-  });
-
-  closeModalBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-    form.reset();
-  });
-
-  // Close modal when clicking outside
-  window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-      form.reset();
-    }
-  });

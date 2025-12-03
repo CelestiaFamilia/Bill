@@ -8,7 +8,7 @@ ob_start();
 try {
     // Database config
     $host = 'localhost';
-    $db   = 'final_project';
+    $db   = 'spending_tracker';
     $user = 'root';
     $pass = '';
     $charset = 'utf8mb4';
@@ -66,7 +66,7 @@ if ($stmt->fetch()) {
 
 // Insert user
 $stmt = $pdo->prepare("
-    INSERT INTO users (user_name, email, password_hash, created_date)
+    INSERT INTO users (full_name, email, password_hash, created_at)
     VALUES (?, ?, ?, NOW())
 ");
 $stmt->execute([$name, $email, $hashedPassword]);

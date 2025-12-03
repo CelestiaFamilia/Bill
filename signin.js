@@ -65,6 +65,11 @@ togglePasswordBtn.addEventListener('click', () => {
   togglePasswordBtn.textContent = isPassword ? '🙈' : '👁️';
 });
 
+
+
+
+
+
 // Sign-in logic
 document.getElementById('signin-btn').addEventListener('click', () => {
   const email = emailInput.value.trim();
@@ -76,8 +81,7 @@ document.getElementById('signin-btn').addEventListener('click', () => {
 
   fetch('login.php',{
     method:'POST',
-    body: formData
-
+    body: formData.append(email,password)
   })
 
 

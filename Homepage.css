@@ -798,6 +798,29 @@ body.dark-mode .logout-modal-content {
   .bar {
     width: 40px;
   }
+  /* ===== Message Modal ===== */
+  #message-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  #message-modal .modal-content {
+    background: #252525;
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+  }
   
   /* On mobile, center the profile modal */
   .profile-modal {

@@ -153,6 +153,6 @@ document.getElementById('logout-btn').addEventListener('click', () => {
   
   // Redirect after short delay
   setTimeout(() => {
-    window.location.href = 'index.html';
+    window.location.href = 'index.php';
   }, 1000);
 });

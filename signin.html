@@ -6,7 +6,6 @@
   <title>Sign In</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="signin.css">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
   <div class="card">
@@ -42,13 +41,16 @@
     </div>
   </div>
 
-  <!-- Forgot Password Modal -->
-  <div class="modal" id="forgot-modal">
+  <!-- Reset Password Modal (Direct Update) -->
+  <div class="modal" id="reset-modal">
     <div class="modal-content">
       <h3>Reset Password</h3>
-      <p>Enter your email and we’ll send you a new/old password to reset your password.</p>
+      <p>Enter your email and a new password.</p>
+      
       <input type="email" id="reset-email" placeholder="your@email.com" style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
-      <button class="btn" id="send-reset">Send Help Reset</button>
+      <input type="password" id="new-password" placeholder="New password" style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+      
+      <button class="btn" id="confirm-reset">Update Password</button>
       <button class="btn cancel-btn" id="cancel-reset">Cancel</button>
     </div>
   </div>

@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit;
@@ -9,11 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = (int)$_SESSION['user_id'];
 $date = $_GET['date'] ?? date('Y-m-d');
 
-if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-    echo json_encode(['success' => false, 'error' => 'Invalid date format']);
-    exit;
-}
-
+// Database config
 $host = 'localhost';
 $db   = 'spending_tracker';
 $user = 'root';
@@ -29,61 +24,53 @@ $opt = [
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $opt);
+    
+    // Fetch user
+    $stmt = $pdo->prepare("SELECT user_id, full_name, gender, birthday, phone, email, address, daily_limit FROM users WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        echo json_encode(['success' => false, 'error' => 'User not found']);
+        exit;
+    }
+
+    // Fetch spending for the date
+    $stmt = $pdo->prepare("
+        SELECT c.category_name, COALESCE(SUM(s.amount), 0) as amount
+        FROM category c
+        LEFT JOIN spending s ON c.category_id = s.category_id AND s.user_id = ? AND s.spending_date = ?
+        GROUP BY c.category_id, c.category_name
+    ");
+    $stmt->execute([$user_id, $date]);
+    $byCategory = [];
+    while ($row = $stmt->fetch()) {
+        $byCategory[$row['category_name']] = [
+            'amount' => (float)$row['amount']
+        ];
+    }
+
+    $total = array_sum(array_column($byCategory, 'amount'));
+
+    echo json_encode([
+        'success' => true,
+        'user' => [
+            'name' => $user['full_name'],
+            'gender' => $user['gender'],
+            'birthday' => $user['birthday'],
+            'phone' => $user['phone'],
+            'email' => $user['email'],
+            'address' => $user['address'],
+            'dailyLimit' => (float)$user['daily_limit'] // ✅ Include daily_limit
+        ],
+        'spending' => [
+            'date' => $date,
+            'total' => $total,
+            'byCategory' => $byCategory
+        ]
+    ]);
+
 } catch (\PDOException $e) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed']);
-    exit;
+    echo json_encode(['success' => false, 'error' => 'Database error']);
+    error_log($e->getMessage());
 }
-
-$stmt = $pdo->prepare("
-    SELECT full_name, email, phone, gender, birthday, address, 
-           profile_picture, daily_limit 
-    FROM users 
-    WHERE user_id = ?
-");
-$stmt->execute([$user_id]);
-$user = $stmt->fetch();
-
-if (!$user) {
-    echo json_encode(['success' => false, 'error' => 'User not found']);
-    exit;
-}
-
-// 🔥 THIS IS THE ONLY QUERY THAT MATTERS 🔥
-$stmt = $pdo->prepare("
-    SELECT c.category_name, SUM(s.amount) as total
-    FROM spending s
-    JOIN category c ON s.category_id = c.category_id
-    WHERE s.user_id = ? AND s.spending_date = ?
-    GROUP BY c.category_id, c.category_name
-");
-$stmt->execute([$user_id, $date]);
-$spendingRows = $stmt->fetchAll();
-
-$byCategory = [];
-$totalSpent = 0;
-foreach ($spendingRows as $row) {
-    $key = $row['category_name'];
-    $amount = (float)$row['total'];
-    $byCategory[$key] = ['amount' => $amount];
-    $totalSpent += $amount;
-}
-
-echo json_encode([
-    'success' => true,
-    'user' => [
-        'name' => $user['full_name'],
-        'email' => $user['email'],
-        'phone' => $user['phone'],
-        'gender' => $user['gender'],
-        'birthday' => $user['birthday'],
-        'address' => $user['address'],
-        'profileImage' => $user['profile_picture'],
-        'dailyLimit' => (float)($user['daily_limit'] ?? 0)
-    ],
-    'spending' => [
-        'date' => $date,
-        'total' => $totalSpent,
-        'byCategory' => $byCategory
-    ]
-]);
-?>

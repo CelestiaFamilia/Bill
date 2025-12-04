@@ -1,7 +1,15 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: signin.html');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="timezone" content="Asia/Manila">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Spending Breakdown</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -27,7 +35,6 @@
       <div class="total-value">₱<span id="total-spent">0</span></div>
     </div>
 
-    <!-- Chart Container -->
     <div class="chart-container">
       <canvas id="spending-chart"></canvas>
     </div>
@@ -39,7 +46,7 @@
     <a href="Homepage.php" class="back-link">← Back to Dashboard</a>
   </div>
 
-  <!-- Chart.js CDN -->
+  <!-- ✅ FIXED: Removed extra spaces -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="breakdown.js"></script>
 </body>

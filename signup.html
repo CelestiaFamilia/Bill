@@ -3,56 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In</title>
+  <title>Sign Up</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="signin.css">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <link rel="stylesheet" href="signup.css">
 </head>
 <body>
   <div class="card">
-    <!-- Header with Back Button -->
-    <div class="header-container">
-      <a href="index.html" class="back-btn">←</a>
-      <h1 class="header">Sign In</h1>
+    <div class="header-row">
+      <a href="signin.html" class="back-icon">←</a>
+      <div class="header">Create Account</div>
+    </div>
+    <div class="login-link">
+      Already have an account? <a href="signin.html">Sign in</a>
+    </div>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input type="text" id="name" placeholder="Your name">
+      <div class="error-message" id="name-error"></div>
     </div>
 
     <div class="field">
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="your@email.com">
+      <div class="error-message" id="email-error"></div>
     </div>
-    <div class="field password-field">
+
+    <div class="field">
       <label for="password">Password</label>
       <div class="password-wrapper">
-        <input type="password" id="password" placeholder="••••••••">
-        <button type="button" class="toggle-password" id="toggle-password">👁️</button>
+        <input type="password" id="password" placeholder="At least 6 characters">
+        <button type="button" class="toggle-password" id="toggle-password">
+          👁️
+        </button>
       </div>
-      <a href="#" id="forgot-password" class="forgot-link">Forgot password?</a>
+      <div class="error-message" id="password-error"></div>
     </div>
-    
-    <button id="signin-btn">Sign In</button>
-    <button class="signup-btn" onclick="window.location.href='signup.html'">Create Account</button>
+
+    <button id="signup-btn">Sign Up</button>
   </div>
 
-  <!-- Message Modal -->
-  <div class="modal" id="message-modal">
-    <div class="modal-content">
-      <h3 id="modal-title">Title</h3>
-      <p id="modal-text">Message here.</p>
-      <button class="btn" id="modal-close">Close</button>
-    </div>
-  </div>
-
-  <!-- Forgot Password Modal -->
-  <div class="modal" id="forgot-modal">
-    <div class="modal-content">
-      <h3>Reset Password</h3>
-      <p>Enter your email and we’ll send you a new/old password to reset your password.</p>
-      <input type="email" id="reset-email" placeholder="your@email.com" style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
-      <button class="btn" id="send-reset">Send Help Reset</button>
-      <button class="btn cancel-btn" id="cancel-reset">Cancel</button>
-    </div>
-  </div>
-
-  <script src="signin.js"></script>
+  <script src="signup.js"></script>
 </body>
 </html>

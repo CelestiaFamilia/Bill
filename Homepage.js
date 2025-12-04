@@ -28,7 +28,7 @@ const previewPlaceholder = document.getElementById('preview-placeholder');
 const imageUploadBtn = document.getElementById('image-upload-btn');
 const profileImageInput = document.getElementById('profile-image-input');
 
-// ===== NEW: Delete Confirmation Modal Elements =====
+// Delete modal elements
 const deleteConfirmModal = document.getElementById('delete-confirm-modal');
 const cancelDeleteBtn = document.getElementById('cancel-delete');
 const confirmDeleteBtn = document.getElementById('confirm-delete');
@@ -38,7 +38,7 @@ const deleteCategoryLabel = document.getElementById('delete-category-label');
 let userData = null;
 let spendingData = null;
 let currentDate = null;
-let categoryToDelete = null; // Track which category is being deleted
+let pendingDelete = null; // { categoryId, categoryName }
 
 const getCurrentDate = () => {
   const now = new Date();
@@ -61,7 +61,7 @@ function initProfileImage() {
   } else {
     const firstLetter = userData.name.charAt(0).toUpperCase();
     previewPlaceholder.textContent = firstLetter;
-    sidebarAvatar.style.background = `url('https://via.placeholder.com/60/FF69B4/ffffff?text=  ${firstLetter}') center/cover no-repeat`;
+    sidebarAvatar.style.background = `url('https://via.placeholder.com/60/FF69B4/ffffff?text=    ${firstLetter}') center/cover no-repeat`;
   }
 }
 
@@ -96,7 +96,7 @@ profileImageInput.addEventListener('change', (e) => {
   }
 });
 
-// ✅ UPDATED: Render breakdown list with delete capability
+// Render breakdown list
 function renderBreakdownList() {
   breakdownList.innerHTML = '';
   
@@ -108,26 +108,27 @@ function renderBreakdownList() {
     item.innerHTML = `
       <div class="color-dot" style="background: ${cat.color};"></div>
       <div>${cat.label} - ₱<span>${value.toFixed(0)}</span> (${percentage}%)</div>
-      <button class="remove-btn" data-category="${cat.key}" ${value <= 0 ? 'disabled' : ''}>✕</button>
+      <button class="remove-btn" data-category-id="${cat.id}" title="Remove all ${cat.label} spending for today">✕</button>
     `;
     breakdownList.appendChild(item);
+  });
+  
+  // Attach delete click handlers
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const categoryId = parseInt(e.target.getAttribute('data-category-id'));
+      const category = categories.find(c => c.id === categoryId);
+      if (!category) return;
 
-    // Attach delete listener only if there's spending
-    if (value > 0) {
-      const removeBtn = item.querySelector('.remove-btn');
-      removeBtn.addEventListener('click', () => openDeleteConfirm(cat));
-    }
+      // Show confirmation modal
+      deleteCategoryLabel.textContent = category.label;
+      deleteConfirmModal.style.display = 'flex';
+      pendingDelete = { categoryId: category.id, categoryName: category.label };
+    });
   });
 }
 
-// ✅ NEW: Open delete confirmation modal
-function openDeleteConfirm(category) {
-  categoryToDelete = category;
-  deleteCategoryLabel.textContent = category.label;
-  deleteConfirmModal.classList.remove('hidden');
-}
-
-// Close profile modal
+// Show profile modal
 profileBtn.addEventListener('click', () => {
   document.getElementById('profile-name-input').value = userData.name || '';
   document.getElementById('profile-gender-input').value = userData.gender || '';
@@ -140,6 +141,7 @@ profileBtn.addEventListener('click', () => {
   profileModal.style.display = 'flex';
 });
 
+// Close profile modal
 closeProfileModal.addEventListener('click', () => {
   profileModal.style.display = 'none';
 });
@@ -413,12 +415,10 @@ window.addEventListener('click', (e) => {
   if (e.target === profileModal) profileModal.style.display = 'none';
   if (e.target === addModal) addModal.style.display = 'none';
   if (e.target === dailyLimitModal) dailyLimitModal.style.display = 'none';
-  if (e.target === deleteConfirmModal) {
-    deleteConfirmModal.classList.add('hidden');
-    categoryToDelete = null;
-  }
   if (e.target === logoutModal) logoutModal.style.display = 'none';
   if (e.target === limitWarningModal) limitWarningModal.style.display = 'none';
+  if (e.target === deleteConfirmModal) deleteConfirmModal.style.display = 'none';
+  
   const successModal = document.getElementById('success-modal');
   if (successModal && e.target === successModal) {
     successModal.style.display = 'none';
@@ -474,7 +474,7 @@ closeWarningModalBtn?.addEventListener('click', () => {
   hideLimitExceededWarning();
 });
 
-// ===== MESSAGE MODAL (fallback) =====
+// ===== MESSAGE MODAL (fallback for errors) =====
 function showMessageModal(title, message) {
   const modal = document.getElementById('message-modal');
   if (!modal) {
@@ -494,38 +494,45 @@ if (modalClose) {
   });
 }
 
-// ✅ NEW: Handle delete confirmation
+// ✅ DELETE CONFIRMATION HANDLERS
 cancelDeleteBtn?.addEventListener('click', () => {
-  deleteConfirmModal.classList.add('hidden');
-  categoryToDelete = null;
+  deleteConfirmModal.style.display = 'none';
+  pendingDelete = null;
 });
 
 confirmDeleteBtn?.addEventListener('click', async () => {
-  if (!categoryToDelete) return;
-
+  if (!pendingDelete) return;
+  
+  const { categoryId, categoryName } = pendingDelete;
+  
   try {
     const response = await fetch('delete-spending.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        category_id: categoryToDelete.id,
+        category_id: categoryId,
         spending_date: currentDate
       })
     });
-
+    
     const result = await response.json();
-
+    
     if (result.success) {
-      await fetchUserData(currentDate); // Refresh UI
-      deleteConfirmModal.classList.add('hidden');
-      categoryToDelete = null;
-
+      // Refresh data
+      await fetchUserData(currentDate);
+      
+      // Hide delete modal
+      deleteConfirmModal.style.display = 'none';
+      
+      // ✅ SHOW SUCCESS IN YOUR MODAL (NOT ALERT)
       const successModal = document.getElementById('success-modal');
       if (successModal) {
         successModal.querySelector('.success-title').textContent = 'Spending Removed!';
-        successModal.querySelector('.success-message').textContent = `All spending for "${categoryToDelete?.label}" has been deleted.`;
+        successModal.querySelector('.success-message').textContent = `All spending for "${categoryName}" has been deleted.`;
         successModal.style.display = 'flex';
-        setTimeout(() => successModal.style.display = 'none', 2000);
+        setTimeout(() => {
+          successModal.style.display = 'none';
+        }, 2000);
       }
     } else {
       showMessageModal('Error', result.message || 'Failed to delete spending.');
@@ -533,6 +540,8 @@ confirmDeleteBtn?.addEventListener('click', async () => {
   } catch (err) {
     console.error('Delete error:', err);
     showMessageModal('Error', 'Could not connect to server.');
+  } finally {
+    pendingDelete = null;
   }
 });
 

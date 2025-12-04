@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+  overflow: visible;
+}
+
 body {
   background: linear-gradient(112.68deg, #030060 0%, #22B868 100%);
   font-family: 'Poppins', sans-serif;
@@ -16,14 +21,12 @@ body {
 /* Sidebar */
 .sidebar {
   width: 380px;
-  background: rgba(255, 255, 255, 0.25);
   border-radius: 28px;
   padding: 24px;
   margin: 24px;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  /* Add gradient to match reference */
   background: linear-gradient(180deg, #3A4D8C 0%, #2A3D90 100%);
 }
 
@@ -33,11 +36,8 @@ body {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(217, 217, 217, 0.25);
   border-radius: 28px;
   cursor: pointer;
-  position: relative;
-  /* Make it look like the reference */
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -55,7 +55,7 @@ body {
 .username {
   font-size: 30px;
   font-weight: 300;
-  max-width: 180px; /* Adjust based on available space */
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -68,7 +68,7 @@ body {
   cursor: pointer;
 }
 
-/* Navigation Items - Match Reference Design */
+/* Navigation Items */
 .nav-item {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 30px;
@@ -80,6 +80,8 @@ body {
   transition: background 0.3s;
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
+  text-decoration: none;
+  color: white;
 }
 
 .nav-item:hover {
@@ -90,7 +92,7 @@ body {
   font-size: 20px;
 }
 
-/* Profile Modal - Now positioned on sidebar side */
+/* Profile Modal */
 .profile-modal {
   display: none;
   position: fixed;
@@ -98,7 +100,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 1000;
   justify-content: flex-start;
   align-items: center;
@@ -257,26 +259,6 @@ body {
   cursor: pointer;
 }
 
-.daily-limit {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 28px;
-  padding: 15px;
-  width: 280px;
-  cursor: pointer;
-  position: relative;
-}
-
-.limit-title {
-  font-size: 25px;
-  font-weight: 300;
-  margin-bottom: 10px;
-}
-
-.limit-value {
-  font-size: 48px;
-  font-weight: 300;
-}
-
 .quick-add {
   background: rgba(255, 255, 255, 0.25);
   border-radius: 28px;
@@ -318,29 +300,27 @@ body {
   height: 100%;
 }
 
-/* Combined Pie Chart and Daily Limit Container */
 .pie-container {
   width: 220px;
-  height: 600px; /* Increased height to accommodate daily limit */
+  height: 600px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Align content to top */
+  justify-content: flex-start;
   position: relative;
-  padding-top: 20px; /* Space at top for daily limit */
+  padding-top: 20px;
 }
 
 .daily-limit-in-pie {
   background: rgba(255, 255, 255, 0.25);
   border-radius: 35px;
   padding: 15px;
-  width: 190px; /* 👈 Reduced from 220px */
-  margin: 20px auto 15px; /* 👈 `auto` centers it horizontally */
+  width: 190px;
+  margin: 20px auto 15px;
   cursor: pointer;
 }
-
 
 .daily-limit-title {
   font-size: 18px;
@@ -352,7 +332,6 @@ body {
   font-size: 32px;
   font-weight: 300;
 }
-
 
 .pie-chart-canvas {
   width: 190px;
@@ -372,7 +351,7 @@ body {
   margin-top: 10px;
 }
 
-/* Breakdown Container (now includes bar graph) */
+/* Breakdown */
 .breakdown {
   width: 780px;
   background: rgba(255, 255, 255, 0.15);
@@ -425,9 +404,9 @@ body {
   border-radius: 20px;
   font-size: 18px;
   font-weight: 400;
-  min-height: 180px; /* 👈 INCREASED to fit 4+ items */
-  max-height: 300px; /* Optional: prevent huge overflow if many items */
-  overflow-y: auto; /* Add scroll if needed */
+  min-height: 180px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .breakdown-item {
@@ -464,7 +443,7 @@ body {
   opacity: 1;
 }
 
-/* --- BAR GRAPH (SMALLER) --- */
+/* Bar Graph */
 .bar-graph-container {
   background: linear-gradient(255.85deg, #00D9FF 3.21%, #2A3D90 97.35%);
   border-radius: 20px;
@@ -472,18 +451,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 170px; /* Increased from 160px to 170px */
+  min-height: 170px;
   position: relative;
-  overflow: hidden; /* Keeps everything contained */
+  overflow: hidden;
   margin-bottom: 20px;
-}
-
-.graph-title {
-  font-size: 20px;
-  font-weight: 500;
-  text-align: center;
-  color: white;
-  margin: 0;
 }
 
 .bars-container {
@@ -491,10 +462,9 @@ body {
   align-items: flex-end;
   justify-content: space-around;
   gap: 10px;
-  height: 80px; /* Reduced height for compactness */
+  height: 80px;
   padding: 0 10px;
-  overflow: visible; /* Allow labels to extend slightly if needed */
-  margin-top: 12px; 
+  margin-top: 12px;
 }
 
 .bar {
@@ -519,7 +489,7 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: #333;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 4px;
   padding: 2px 4px;
   white-space: nowrap;
@@ -527,21 +497,21 @@ body {
 
 .bar-label {
   position: absolute;
-  bottom: -40px; /* Adjusted from -48px */
+  bottom: -40px;
   left: 0;
   right: 0;
   text-align: center;
   font-size: 10px;
   font-weight: 500;
   color: white;
-  white-space: nowrap; /* 👈 Keep on one line */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Show ... if too long */
-  max-width: 60px; /* Match bar width */
+  text-overflow: ellipsis;
+  max-width: 60px;
   margin: 0 auto;
   padding: 0 2px;
   line-height: 1.2;
-  height: 18px; /* Fixed height for consistency */
+  height: 18px;
 }
 
 .bar-label:hover {
@@ -549,17 +519,15 @@ body {
   color: #333;
   padding: 4px 8px;
   border-radius: 6px;
-  white-space: nowrap; /* Keep text in one line */
+  white-space: nowrap;
   overflow: visible;
   text-overflow: clip;
   z-index: 10;
   font-size: 12px;
   max-width: none;
-  min-width: auto; /* 👈 Allows shrink-to-fit */
-  display: inline-block; /* 👈 Critical: makes width wrap content */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
-  position: relative; /* Needed for ::after arrow if used */
 }
 
 .spending-category-section {
@@ -569,130 +537,62 @@ body {
   margin-top: 16px;
 }
 
+.expenses-title,
 .category-title {
   font-size: 20px;
   font-weight: 500;
   color: white;
-  margin: 0 0 4px 12px;
+  margin: 8px 0 4px 12px;
   padding: 0;
 }
 
-.expenses-title {
-  font-size: 22px;
-  font-weight: 500;
-  margin: 8px 0 4px 0;
-  padding: 0 12px;
-}
-
-.category-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: white;
-  margin: 8px 0 4px 12px; /* Aligns with expense list padding */
-  padding: 0;
-}
-
-/* Add Spending Modal */
-.add-modal {
+/* Modals: Add, Daily Limit, Logout, Warning */
+.add-modal,
+.daily-limit-modal,
+.logout-modal,
+.limit-warning-modal {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 1000;
   justify-content: center;
   align-items: center;
 }
 
-.add-modal-content {
-  background: rgba(255,255,255,0.95);
+.add-modal-content,
+.daily-limit-modal-content,
+.logout-modal-content,
+.limit-warning-content {
+  background: rgba(255, 255, 255, 0.95);
   color: black;
   padding: 30px;
   border-radius: 20px;
   width: 400px;
   max-width: 90%;
+  text-align: center;
 }
 
-.add-modal-title {
-  font-size: 24px;
+.input-group,
+.daily-limit-input {
   margin-bottom: 20px;
-}
-
-.input-group {
-  margin-bottom: 20px;
-}
-
-.input-field {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 16px;
 }
 
-.category-select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 16px;
-  background: white;
-}
-
-.save-btn {
-  width: 100%;
-  padding: 12px;
-  background: #030060;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.save-btn:hover {
-  background: #22B868;
-}
-
-.daily-limit-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.daily-limit-modal-content {
-  background: rgba(255,255,255,0.95);
-  color: black;
-  padding: 30px;
-  border-radius: 20px;
-  width: 400px;
-  max-width: 90%;
-}
-
-.daily-limit-title {
-  font-size: 18px;
-  margin-bottom: 4px;
-}
-
+.input-field,
+.category-select,
 .daily-limit-input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 16px;
-  margin-bottom: 20px;
 }
 
+.save-btn,
 .update-btn {
   width: 100%;
   padding: 12px;
@@ -705,62 +605,100 @@ body {
   transition: background 0.3s;
 }
 
+.save-btn:hover,
 .update-btn:hover {
   background: #22B868;
 }
-/* Logout Modal */
-.logout-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1100;
-  justify-content: center;
-  align-items: center;
-}
 
-.logout-modal-content {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 30px;
-  border-radius: 20px;
-  width: 400px;
-  max-width: 90%;
-  text-align: center;
-  color: #333;
-}
 .warning-red {
   color: #ff4d4d !important;
   font-weight: 600;
 }
-.limit-warning-modal {
+
+/* ✅ SUCCESS MODAL — Optimized for Flex Body */
+.success-modal {
   display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  /* Critical: isolates from flex parent */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+.success-modal-content {
+  background: #2c2c2c;
+  color: white;
+  padding: 30px 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  max-width: 320px;
+  width: 90%;
+}
+
+.checkmark {
+  font-size: 48px;
+  color: #4CAF50;
+  margin-bottom: 12px;
+}
+
+.success-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.success-message {
+  font-size: 15px;
+  color: #ccc;
+}
+
+.modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1050;
-  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  display: flex;
   align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.limit-warning-content {
-  background: rgba(255, 255, 255, 0.95);
-  color: black;
-  padding: 30px;
-  border-radius: 20px;
-  width: 400px;
-  max-width: 90%;
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
   text-align: center;
 }
 
-body.dark-mode .logout-modal-content {
-  background: rgba(30, 30, 40, 0.95);
-  color: #f0f0f0;
+.modal-actions button {
+  margin: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#cancel-delete {
+  background: #ccc;
+}
+
+#confirm-delete {
+  background: #e74c3c;
+  color: white;
 }
 
 /* Responsive */
@@ -771,7 +709,7 @@ body.dark-mode .logout-modal-content {
   .header-row {
     flex-direction: column;
   }
-  .daily-limit, .quick-add, .date-picker-container {
+  .quick-add, .date-picker-container {
     width: 100%;
   }
   .breakdown {
@@ -790,154 +728,74 @@ body.dark-mode .logout-modal-content {
   .main-content {
     padding: 8px;
   }
-  
   .bars-container {
     height: 120px;
   }
-  
   .bar {
     width: 40px;
   }
-  /* ===== Message Modal ===== */
-  #message-modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  #message-modal .modal-content {
-    background: #252525;
-    color: white;
-    padding: 25px;
-    border-radius: 12px;
-    max-width: 400px;
-    text-align: center;
-  }
-  
-  /* On mobile, center the profile modal */
-  .profile-modal {
-    padding-left: 0;
-    justify-content: center;
-  }
-}
-/* Modal text color adapts to theme */
-body.light-mode .profile-modal-content,
-body.light-mode .add-modal-content,
-body.light-mode .daily-limit-modal-content {
-  background: rgba(255, 255, 255, 0.95);
-  color: #333; /* Dark gray for light mode — readable on white */
 }
 
-/* Dark Mode: Override main background */
+/* ===== DARK MODE ===== */
 body.dark-mode {
   background: linear-gradient(112.68deg, #121212 0%, #0a0a0a 100%) !important;
   color: #f0f0f0;
 }
 
-/* Optional: Make translucent elements adapt too */
 body.dark-mode .sidebar {
-  background: #1e1e28 !important; /* Deep navy */
-  color: #ffffff !important;
+  background: #1e1e28 !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-body.dark-mode .profile-header {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-body.dark-mode .username {
-  color: #ffffff !important;
-  font-weight: 400 !important; /* Slightly bolder for readability */
-}
-
+body.dark-mode .profile-header,
 body.dark-mode .nav-item {
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
+}
+
+body.dark-mode .username,
+body.dark-mode .nav-item,
+body.dark-mode .edit-icon {
+  color: white !important;
+  opacity: 1 !important;
 }
 
 body.dark-mode .nav-item:hover {
   background: rgba(255, 255, 255, 0.15) !important;
 }
 
-body.dark-mode .edit-icon {
-  color: #ffffff !important;
-  opacity: 0.8 !important;
-}
-
-/* --- PROFILE MODAL --- */
-body.dark-mode .profile-modal-content {
+body.dark-mode .profile-modal-content,
+body.dark-mode .add-modal-content,
+body.dark-mode .daily-limit-modal-content,
+body.dark-mode .logout-modal-content,
+body.dark-mode .limit-warning-content {
   background: #1e1e28 !important;
-  color: #ffffff !important;
+  color: #f0f0f0 !important;
 }
 
-body.dark-mode .profile-field .field-label {
-  color: #ffffff !important;
-}
-
-body.dark-mode .profile-field .field-input {
+body.dark-mode .field-input,
+body.dark-mode .input-field,
+body.dark-mode .category-select,
+body.dark-mode .daily-limit-input {
   background: #2a2a3a !important;
-  color: #ffffff !important;
+  color: white !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
-
-body.dark-mode .btn {
-  background: #030060 !important;
-  color: white !important;
-}
-
-body.dark-mode .btn:hover {
-  background: #22B868 !important;
-}
-
-body.dark-mode .image-upload-btn {
-  background: #030060 !important;
-  color: white !important;
-}
-
-body.dark-mode .image-upload-btn:hover {
-  background: #22B868 !important;
-} 
-
-/* Ensure all text inside is white */
-body.dark-mode .sidebar .username,
-body.dark-mode .sidebar .nav-item,
-body.dark-mode .sidebar .nav-item span,
-body.dark-mode .sidebar .profile-header,
-body.dark-mode .edit-icon {
-  color: white !important;
-  opacity: 1 !important;
-}
-
 
 body.dark-mode .analytics-card,
 body.dark-mode .breakdown,
 body.dark-mode .pie-container,
-body.dark-mode .daily-limit,
 body.dark-mode .quick-add,
-body.dark-mode .date-picker-container,
-body.dark-mode .selected-date-container,
-body.dark-mode .bar-graph-container {
+body.dark-mode .date-picker-container {
   background: rgba(30, 30, 40, 0.7) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Keep selected-date and bar-graph with a subtle dark accent */
 body.dark-mode .selected-date-container,
 body.dark-mode .bar-graph-container {
   background: linear-gradient(255.85deg, #0055aa 3.21%, #1a2a50 97.35%) !important;
 }
 
-/* Invert date picker icon in dark mode */
 body.dark-mode #date-picker::-webkit-calendar-picker-indicator {
   filter: invert(0.8);
 }

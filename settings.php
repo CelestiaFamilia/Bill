@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">Settings</div>
+
+    <!-- Profile Section -->
+    <div class="card">
+      <div class="section-title">Profile</div>
+
+      <!-- Profile Image Upload -->
+      <div class="profile-image-container">
+        <div class="profile-preview" id="profile-preview">
+          <span id="preview-placeholder">K</span>
+        </div>
+        <button class="image-upload-btn" id="image-upload-btn">Change Profile Picture</button>
+        <input type="file" id="profile-image-input" class="file-input" accept="image/*">
+      </div>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label for="gender">Gender</label>
+        <input type="text" id="gender" placeholder="Female">
+      </div>
+      <div class="field">
+        <label for="birthday">Birthday</label>
+        <input type="text" id="birthday" placeholder="May 8, 2005">
+      </div>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" placeholder="09912398765">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="kagurahimme@gmail.com">
+      </div>
+      <div class="field">
+        <label for="address">Address</label>
+        <input type="text" id="address" placeholder="Cyberion District">
+      </div>
+      <button class="btn" id="logout-btn">Logout</button>
+    </div>
+
+    <!-- Daily Limit Section -->
+    <div class="card">
+      <div class="section-title">Budget</div>
+      <div class="field">
+        <label for="daily-limit">Daily Spending Limit (₱)</label>
+        <input type="number" id="daily-limit" min="0" step="0.01" placeholder="200">
+      </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="card">
+      <div class="section-title">Appearance</div>
+      <div class="toggle-container">
+        <span class="toggle-label">Dark Mode</span>
+        <label class="switch">
+          <input type="checkbox" id="theme-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button id="save-btn">Save Changes</button>
+    <a href="Homepage.php" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <!-- Notification Modal -->
+  <div class="notification-modal" id="notification-modal">
+    <div class="notification-content" id="notification-text">
+      Settings saved!
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

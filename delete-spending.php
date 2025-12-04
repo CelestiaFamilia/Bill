@@ -17,14 +17,16 @@ if (!$category_id || !$spending_date || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $sp
 }
 
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=spending_tracker', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO('mysql:host=localhost;dbname=spending_tracker;charset=utf8mb4', 'root', '', [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
 
-    $stmt = $pdo->prepare("DELETE FROM spending WHERE user_id = ? AND category_id = ? AND DATE(spending_date) = ?");
-    $deleted = $stmt->execute([$_SESSION['user_id'], $category_id, $spending_date]);
+    $stmt = $pdo->prepare("DELETE FROM spending WHERE user_id = ? AND category_id = ? AND spending_date = ?");
+    $stmt->execute([$_SESSION['user_id'], $category_id, $spending_date]);
 
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'message' => 'Spending deleted.']);
 } catch (Exception $e) {
-    error_log($e->getMessage());
+    error_log('Delete error: ' . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Server error.']);
 }

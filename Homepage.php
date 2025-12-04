@@ -152,7 +152,6 @@ if (!isset($_SESSION['user_id'])) {
       <div class="input-group">
         <select id="category" class="category-select">
           <option value="">Select Category</option>
-          <!-- ⚠️ These values must match your DB category_name exactly -->
           <option value="Food">Food</option>
           <option value="Groceries">Groceries</option>
           <option value="Transportation">Transportation</option>
@@ -198,15 +197,26 @@ if (!isset($_SESSION['user_id'])) {
     </div>
   </div>
 
-  <!-- Message Modal -->
-  <div id="message-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <span id="modal-close" class="close">&times;</span>
-      <h3 id="modal-title">Title</h3>
-      <p id="modal-text">Message here.</p>
+  <!-- ✅ SUCCESS MODAL: Added for profile save confirmation -->
+  <div class="success-modal" id="success-modal">
+    <div class="success-modal-content">
+      <div class="checkmark">✓</div>
+      <div class="success-title">Profile Saved!</div>
+      <div class="success-message">Your changes have been saved successfully.</div>
     </div>
   </div>
 
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-confirm-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Confirm Deletion</h3>
+      <p>Are you sure you want to remove all spending for <strong id="delete-category-label">this category</strong> today?</p>
+      <div class="modal-actions">
+        <button id="cancel-delete">Cancel</button>
+        <button id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
 
   <script src="Homepage.js"></script>
 </body>

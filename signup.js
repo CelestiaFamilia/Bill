@@ -100,28 +100,52 @@ passwordInput.addEventListener('input', () => {
   if (passwordInput.value.length >= 6) clearError(passwordError);
 });
 
-// Sign-up handler
-signupBtn.addEventListener('click', () => {
+signupBtn.addEventListener('click', async (e) => {
+  e.preventDefault(); // Prevent page reload
+
   const isNameValid = validateName();
   const isEmailValid = validateEmail();
   const isPasswordValid = validatePassword();
 
-  // If all fields are valid
-  if (isNameValid && isEmailValid && isPasswordValid) {
-    // Save minimal user data (no password stored for demo)
-    localStorage.setItem('userData', JSON.stringify({
-      name: nameInput.value.trim(),
-      email: emailInput.value.trim(),
-      gender: 'Not set',
-      birthday: '',
-      phone: '',
-      address: '',
-      profileImage: null
-    }));
+  if (!isNameValid || !isEmailValid || !isPasswordValid) {
+    return;
+  }
 
-    localStorage.setItem('isLoggedIn', 'true');
+  const userData = {
+    name: nameInput.value.trim(),
+    email: emailInput.value.trim(),
+    password: passwordInput.value
+  };
 
-    // Redirect to sign-in page after success
-    window.location.href = 'signin.html';
+  try {
+    const response = await fetch('signup.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    });
+
+    // Log raw response for debugging
+    const text = await response.text();
+    console.log('Raw response:', text);
+
+    // Try to parse as JSON
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (jsonErr) {
+      throw new Error(`Invalid JSON response: ${text}`);
+    }
+
+    if (result.success) {
+      alert(result.message || 'Account created!');
+      window.location.href = result.redirect || 'signin.html';
+    } else {
+      alert(`Signup failed: ${result.message || 'Unknown error.'}`);
+    }
+  } catch (err) {
+    alert(`Network error: ${err.message}`);
+    console.error('Signup error details:', err);
   }
 });

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Spending</title>
+  <!-- Fixed Google Fonts URL (removed extra space) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="add.css"> <!-- ✅ Link to CSS -->
+</head>
+<body>
+  <div class="card">
+    <div class="header">Add Spending</div>
+    <div class="input-group">
+      <label for="date">Date</label>
+      <input type="date" id="date" />
+      <div class="error-msg" id="date-error"></div>
+    </div>
+    <div class="input-group">
+      <label for="amount">Amount (₱)</label>
+      <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" />
+      <div class="error-msg" id="amount-error"></div>
+    </div>
+    <div class="input-group">
+      <label for="category">Category</label>
+      <select id="category">
+        <option value="">Select</option>
+        <option value="food">Food</option>
+        <option value="groceries">Groceries</option>
+        <option value="transport">Transportation</option>
+        <option value="load">Load/Subscription</option>
+      </select>
+      <div class="error-msg" id="category-error"></div>
+    </div>
+    <button id="save-btn">Add Spending</button>
+    <a href="Homepage.php" class="back-link">← Back to Dashboard</a>
+  </div>
+  <!-- Success Modal -->
+<div class="success-modal" id="success-modal">
+  <div class="success-modal-content">
+    <div class="modal-title">✅ Success!</div>
+    <p style="text-align: center; margin: 15px 0; font-size: 16px; color: #27ae60;">
+      Your spending has been added successfully.
+    </p>
+    <button class="btn" id="close-success-modal">OK</button>
+  </div>
+</div>
+
+  <!-- ✅ Link to JavaScript at end of body -->
+  <script src="add.js"></script>
+</body>
+</html>

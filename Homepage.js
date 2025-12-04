@@ -1,39 +1,3 @@
-// Initialize data from localStorage or defaults
-let userData = JSON.parse(localStorage.getItem('userData')) || {
-  name: 'kagura',
-  gender: 'Female',
-  birthday: 'May 8, 2005',
-  phone: '09912398765',
-  email: 'kagurahimme@gmail.com',
-  address: 'Cyberion District',
-  profileImage: null // Will store image data URL
-};
-
-// Get current date in YYYY-MM-DD format
-const getCurrentDate = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-// Initialize spending data structure
-let spendingData = JSON.parse(localStorage.getItem('spendingDataV2')) || {};
-let currentDate = getCurrentDate();
-
-// Initialize today's data if it doesn't exist
-if (!spendingData[currentDate]) {
-  spendingData[currentDate] = {
-    food: 0,
-    groceries: 0,
-    transport: 0,
-    load: 0,
-    total: 0,
-    dailyLimit: 200
-  };
-}
-
 // DOM elements
 const profileBtn = document.getElementById('profile-btn');
 const profileModal = document.getElementById('profile-modal');
@@ -64,15 +28,22 @@ const previewPlaceholder = document.getElementById('preview-placeholder');
 const imageUploadBtn = document.getElementById('image-upload-btn');
 const profileImageInput = document.getElementById('profile-image-input');
 
-// Set today as default in date picker
-datePicker.value = currentDate;
+// ===== NEW: Server-based data model =====
+let userData = null;
+let spendingData = null; // { date, total, byCategory }
+let currentDate = null;
 
-// Categories configuration
+// Get current date in YYYY-MM-DD
+const getCurrentDate = () => {
+  const now = new Date();
+  return now.toISOString().split('T')[0];
+};
+
 const categories = [
-  { key: 'food', label: 'Food', color: '#18C80E' },
-  { key: 'groceries', label: 'Groceries', color: '#F07DF2' },
-  { key: 'transport', label: 'Transportation', color: '#CB4040' },
-  { key: 'load', label: 'Load/Subscription', color: '#F49415' }
+  { id: 1, key: 'Food', label: 'Food', color: '#18C80E' },
+  { id: 2, key: 'Groceries', label: 'Groceries', color: '#F07DF2' },
+  { id: 3, key: 'Transportation', label: 'Transportation', color: '#CB4040' },
+  { id: 4, key: 'Load/Subscription', label: 'Load/Subscription', color: '#F49415' }
 ];
 
 // Initialize profile image
@@ -82,20 +53,19 @@ function initProfileImage() {
     profilePreview.innerHTML = `<img src="${userData.profileImage}" alt="Profile">`;
     previewPlaceholder.style.display = 'none';
   } else {
-    // Use first letter of name as placeholder
     const firstLetter = userData.name.charAt(0).toUpperCase();
     previewPlaceholder.textContent = firstLetter;
     sidebarAvatar.style.background = `url('https://via.placeholder.com/60/FF69B4/ffffff?text=${firstLetter}') center/cover no-repeat`;
   }
 }
 
-// Initialize UI
+// Initialize UI from server data
 function initUI() {
   // Set profile name
   profileNameEl.textContent = userData.name;
 
-  // Set daily limit
-  dailyLimitValueEl.textContent = spendingData[currentDate].dailyLimit.toFixed(0);
+  // Set daily limit (from user profile)
+  dailyLimitValueEl.textContent = userData.dailyLimit.toFixed(0);
 
   // Update spending display
   updateSpendingDisplay();
@@ -109,7 +79,7 @@ function initUI() {
   initProfileImage();
 }
 
-// Handle profile image upload
+// Handle profile image upload (client-side preview only)
 imageUploadBtn.addEventListener('click', () => {
   profileImageInput.click();
 });
@@ -128,13 +98,13 @@ profileImageInput.addEventListener('change', (e) => {
   }
 });
 
-// Render breakdown list with remove buttons
+// Render breakdown list
 function renderBreakdownList() {
   breakdownList.innerHTML = '';
   
   categories.forEach(cat => {
-    const value = spendingData[currentDate][cat.key];
-    const percentage = spendingData[currentDate].total > 0 ? ((value / spendingData[currentDate].total) * 100).toFixed(1) : 0;
+    const value = spendingData.byCategory[cat.key]?.amount || 0;
+    const percentage = spendingData.total > 0 ? ((value / spendingData.total) * 100).toFixed(1) : 0;
     const item = document.createElement('div');
     item.className = 'breakdown-item';
     item.innerHTML = `
@@ -145,45 +115,25 @@ function renderBreakdownList() {
     breakdownList.appendChild(item);
   });
   
-  // Add event listeners to remove buttons
+  // Add event listeners to remove buttons (optional: add delete API later)
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const category = e.target.getAttribute('data-category');
-      removeSpending(category);
+      showMessageModal('Info', 'Removing spending is not yet supported in online mode.');
     });
   });
 }
 
-// Remove spending for a category
-function removeSpending(category) {
-  if (spendingData[currentDate][category] > 0) {
-    spendingData[currentDate][category] = 0;
-    spendingData[currentDate].total = categories.reduce((sum, cat) => 
-      sum + spendingData[currentDate][cat.key], 0);
-    
-    // Save to localStorage
-    localStorage.setItem('spendingDataV2', JSON.stringify(spendingData));
-    
-    // Update UI
-    updateSpendingDisplay();
-    drawPieChart();
-    drawBarGraph();
-    renderBreakdownList();
-  }
-}
-
 // Show profile modal
 profileBtn.addEventListener('click', () => {
-  document.getElementById('profile-name-input').value = userData.name;
-  document.getElementById('profile-gender-input').value = userData.gender;
-  document.getElementById('profile-birthday-input').value = userData.birthday;
-  document.getElementById('profile-phone-input').value = userData.phone;
-  document.getElementById('profile-email-input').value = userData.email;
-  document.getElementById('profile-address-input').value = userData.address;
+  document.getElementById('profile-name-input').value = userData.name || '';
+  document.getElementById('profile-gender-input').value = userData.gender || '';
+  document.getElementById('profile-birthday-input').value = userData.birthday || '';
+  document.getElementById('profile-phone-input').value = userData.phone || '';
+  document.getElementById('profile-email-input').value = userData.email || '';
+  document.getElementById('profile-address-input').value = userData.address || '';
   
-  // Re-initialize profile image in modal
-  initProfileImage();
-  
+  initProfileImage(); // Refresh preview
   profileModal.style.display = 'flex';
 });
 
@@ -192,29 +142,57 @@ closeProfileModal.addEventListener('click', () => {
   profileModal.style.display = 'none';
 });
 
-// Save profile
-saveProfileBtn.addEventListener('click', () => {
-  userData.name = document.getElementById('profile-name-input').value.trim();
-  userData.gender = document.getElementById('profile-gender-input').value.trim();
-  userData.birthday = document.getElementById('profile-birthday-input').value.trim();
-  userData.phone = document.getElementById('profile-phone-input').value.trim();
-  userData.email = document.getElementById('profile-email-input').value.trim();
-  userData.address = document.getElementById('profile-address-input').value.trim();
+// Save profile (now synced with update-profile.php)
+saveProfileBtn.addEventListener('click', async () => {
+  const name = document.getElementById('profile-name-input').value.trim();
+  const gender = document.getElementById('profile-gender-input').value.trim();
+  const birthday = document.getElementById('profile-birthday-input').value.trim();
+  const phone = document.getElementById('profile-phone-input').value.trim();
+  const email = document.getElementById('profile-email-input').value.trim();
+  const address = document.getElementById('profile-address-input').value.trim();
 
-  // Save to localStorage
-  localStorage.setItem('userData', JSON.stringify(userData));
+  // Validation
+  if (!name) {
+    showMessageModal('Error', 'Name is required.');
+    return;
+  }
 
-  // Update UI
-  profileNameEl.textContent = userData.name;
-  initProfileImage();
+  try {
+    // Send data to server
+    const response = await fetch('update-profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, gender, birthday, phone, email, address })
+    });
 
-  // Close modal
-  profileModal.style.display = 'none';
+    const result = await response.json();
+
+    if (result.success) {
+      // Update local data
+      userData.name = name;
+      userData.gender = gender;
+      userData.birthday = birthday;
+      userData.phone = phone;
+      userData.email = email;
+      userData.address = address;
+
+      // Update UI
+      profileNameEl.textContent = userData.name;
+      initProfileImage();
+      profileModal.style.display = 'none';
+      showMessageModal('Success', 'Profile updated successfully!');
+    } else {
+      showMessageModal('Error', result.message || 'Failed to update profile.');
+    }
+  } catch (err) {
+    console.error('Profile update error:', err);
+    showMessageModal('Error', 'Could not connect to server.');
+  }
 });
 
 // Show daily limit modal
 dailyLimitInPie.addEventListener('click', () => {
-  dailyLimitInput.value = spendingData[currentDate].dailyLimit;
+  dailyLimitInput.value = userData.dailyLimit;
   dailyLimitModal.style.display = 'flex';
 });
 
@@ -223,7 +201,7 @@ closeDailyLimitModal.addEventListener('click', () => {
   dailyLimitModal.style.display = 'none';
 });
 
-// Update daily limit
+// Update daily limit (client-side only for now)
 updateDailyLimitBtn.addEventListener('click', () => {
   const newLimit = parseFloat(dailyLimitInput.value);
   if (isNaN(newLimit) || newLimit < 0) {
@@ -231,16 +209,12 @@ updateDailyLimitBtn.addEventListener('click', () => {
     return;
   }
 
-  spendingData[currentDate].dailyLimit = newLimit;
-
-  // Save to localStorage
-  localStorage.setItem('spendingDataV2', JSON.stringify(spendingData));
-
-  // Update UI
-  dailyLimitValueEl.textContent = spendingData[currentDate].dailyLimit.toFixed(0);
-
-  // Close modal
+  userData.dailyLimit = newLimit;
+  dailyLimitValueEl.textContent = userData.dailyLimit.toFixed(0);
   dailyLimitModal.style.display = 'none';
+
+  // Re-check limit warning
+  updateSpendingDisplay();
 });
 
 // Show add spending modal
@@ -255,58 +229,55 @@ closeAddModal.addEventListener('click', () => {
   addModal.style.display = 'none';
 });
 
-// Save spending
-saveBtn.addEventListener('click', () => {
+// Save spending to server
+saveBtn.addEventListener('click', async () => {
   const amount = parseFloat(amountInput.value);
-  const category = categorySelect.value;
+  const categoryKey = categorySelect.value; // e.g., "Food"
 
-  if (isNaN(amount) || amount <= 0 || !category) {
+  if (isNaN(amount) || amount <= 0 || !categoryKey) {
     alert('Please enter a valid amount and select a category.');
     return;
   }
 
-  // Initialize date data if it doesn't exist
-  if (!spendingData[currentDate]) {
-    spendingData[currentDate] = {
-      food: 0,
-      groceries: 0,
-      transport: 0,
-      load: 0,
-      total: 0,
-      dailyLimit: 200
-    };
+  // Find category ID from key
+  const selectedCategory = categories.find(cat => cat.key === categoryKey);
+  if (!selectedCategory) {
+    showMessageModal('Error', 'Invalid category selected.');
+    return;
   }
 
-  // Update spending data
-  spendingData[currentDate][category] += amount;
-  spendingData[currentDate].total += amount;
+  try {
+    const response = await fetch('save-spending.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        amount, 
+        category_id: selectedCategory.id, // 👈 Send ID, not name
+        spending_date: currentDate 
+      })
+    });
 
-  // Save to localStorage
-  localStorage.setItem('spendingDataV2', JSON.stringify(spendingData));
-
-  // Update UI
-  updateSpendingDisplay();
-  drawPieChart();
-  drawBarGraph();
-  renderBreakdownList();
-
-  // Reset form
-  amountInput.value = '';
-  categorySelect.value = '';
-
-  // Close modal
-  addModal.style.display = 'none';
+    const result = await response.json();
+    
+    if (result.success) {
+      await fetchUserData(currentDate);
+      addModal.style.display = 'none';
+    } else {
+      showMessageModal('Error', result.message || 'Failed to save spending.');
+    }
+  } catch (err) {
+    console.error('Save error:', err);
+    showMessageModal('Error', 'Could not connect to server.');
+  }
 });
 
 function updateSpendingDisplay() {
-  const data = spendingData[currentDate];
-  const total = data.total;
-  const limit = data.dailyLimit;
+  const total = spendingData.total;
+  const limit = userData.dailyLimit;
 
   totalSpentEl.textContent = total.toFixed(0);
   todayTotalEl.textContent = total.toFixed(0);
 
-  // Apply or remove red warning based on limit
   const todayValueEl = document.getElementById('today-total');
   if (total > limit) {
     todayValueEl.classList.add('warning-red');
@@ -317,7 +288,7 @@ function updateSpendingDisplay() {
   }
 }
 
-// Draw pie chart with percentages
+// Draw pie chart
 function drawPieChart() {
   const ctx = pieChartCanvas.getContext('2d');
   const width = pieChartCanvas.width;
@@ -326,20 +297,17 @@ function drawPieChart() {
   const centerY = height / 2;
   const radius = Math.min(width, height) / 2 - 10;
 
-  // Clear canvas
   ctx.clearRect(0, 0, width, height);
 
-  const values = categories.map(cat => spendingData[currentDate][cat.key]);
+  const values = categories.map(cat => spendingData.byCategory[cat.key]?.amount || 0);
   const total = values.reduce((a, b) => a + b, 0);
 
-  // Draw pie slices with percentages
   let startAngle = 0;
   for (let i = 0; i < categories.length; i++) {
     const value = values[i];
     const percentage = total > 0 ? value / total : 0;
     const endAngle = startAngle + percentage * 2 * Math.PI;
 
-    // Draw slice
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -347,13 +315,10 @@ function drawPieChart() {
     ctx.fillStyle = categories[i].color;
     ctx.fill();
 
-    // Calculate percentage for this slice
     const slicePercentage = total > 0 ? (value / total) * 100 : 0;
-    
-    // Draw percentage text on the slice
-    if (slicePercentage > 5) { // Only show percentage if it's significant
+    if (slicePercentage > 5) {
       const midAngle = startAngle + (endAngle - startAngle) / 2;
-      const textRadius = radius * 0.7; // Position text at 70% of radius
+      const textRadius = radius * 0.7;
       const textX = centerX + Math.cos(midAngle) * textRadius;
       const textY = centerY + Math.sin(midAngle) * textRadius;
       
@@ -366,49 +331,44 @@ function drawPieChart() {
     startAngle = endAngle;
   }
 
-  // Draw center circle
+  // Center circle
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
   ctx.fillStyle = 'rgba(255,255,255,0.2)';
   ctx.fill();
 
-  // Draw total spent in center
+  // Total in center
   ctx.fillStyle = 'white';
   ctx.font = 'bold 24px Poppins';
   ctx.textAlign = 'center';
-  ctx.fillText(`₱${spendingData[currentDate].total}`, centerX, centerY + 8);
+  ctx.fillText(`₱${total.toFixed(0)}`, centerX, centerY + 8);
 }
 
 function drawBarGraph() {
-  // Clear container
   barsContainer.innerHTML = '';
 
-  // Find maximum value for scaling
-  const values = categories.map(cat => spendingData[currentDate][cat.key]);
-  const maxValue = Math.max(...values, 1); // Avoid division by zero
+  const values = categories.map(cat => spendingData.byCategory[cat.key]?.amount || 0);
+  const maxValue = Math.max(...values, 1);
+  const total = spendingData.total;
 
-  // Create bars
   categories.forEach(cat => {
-    const value = spendingData[currentDate][cat.key];
+    const value = spendingData.byCategory[cat.key]?.amount || 0;
     const percentageOfMax = (value / maxValue) * 100;
-    const maxHeight = 70; // Match .bars-container height
-    const height = Math.max(10, (percentageOfMax * maxHeight) / 100);
+    const height = Math.max(10, (percentageOfMax * 70) / 100);
 
     const bar = document.createElement('div');
     bar.className = 'bar';
     bar.style.height = `${height}px`;
     bar.style.backgroundColor = cat.color;
 
-    // Add percentage label above the bar
     const percentageLabel = document.createElement('div');
     percentageLabel.className = 'bar-percentage';
-    const barPercentage = spendingData[currentDate].total > 0 ? ((value / spendingData[currentDate].total) * 100).toFixed(1) : 0;
+    const barPercentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
     percentageLabel.textContent = `${barPercentage}%`;
 
-    // Inside drawBarGraph(), when creating label:
     const label = document.createElement('div');
     label.className = 'bar-label';
-    label.textContent = cat.label; // Show full name
+    label.textContent = cat.label;
 
     bar.appendChild(percentageLabel);
     bar.appendChild(label);
@@ -419,34 +379,17 @@ function drawBarGraph() {
 // Handle date picker change
 datePicker.addEventListener('change', () => {
   currentDate = datePicker.value;
-  
-  // Initialize data for this date if it doesn't exist
-  if (!spendingData[currentDate]) {
-    spendingData[currentDate] = {
-      food: 0,
-      groceries: 0,
-      transport: 0,
-      load: 0,
-      total: 0,
-      dailyLimit: 200
-    };
-  }
-  
-  initUI();
+  fetchUserData(currentDate);
 });
 
 // Close modals when clicking outside
 window.addEventListener('click', (e) => {
-  if (e.target === profileModal) {
-    profileModal.style.display = 'none';
-  }
-  if (e.target === addModal) {
-    addModal.style.display = 'none';
-  }
-  if (e.target === dailyLimitModal) {
-    dailyLimitModal.style.display = 'none';
-  }
+  if (e.target === profileModal) profileModal.style.display = 'none';
+  if (e.target === addModal) addModal.style.display = 'none';
+  if (e.target === dailyLimitModal) dailyLimitModal.style.display = 'none';
 });
+
+// Apply saved theme
 (function applyTheme() {
   const savedTheme = localStorage.getItem('theme') || 'dark';
   document.body.className = document.body.className
@@ -455,47 +398,42 @@ window.addEventListener('click', (e) => {
   document.body.classList.add(savedTheme + '-mode');
 })();
 
-
 // ===== LOGOUT HANDLING =====
 const logoutBtn = document.getElementById('logout-btn');
 const logoutModal = document.getElementById('logout-modal');
 const confirmLogoutBtn = document.getElementById('confirm-logout');
 const cancelLogoutBtn = document.getElementById('cancel-logout');
 
-// Show logout modal
 logoutBtn.addEventListener('click', () => {
   logoutModal.style.display = 'flex';
 });
 
-// Cancel logout
 cancelLogoutBtn.addEventListener('click', () => {
   logoutModal.style.display = 'none';
 });
 
-// Confirm logout (ONLY remove login status)
 confirmLogoutBtn.addEventListener('click', () => {
-  localStorage.removeItem('isLoggedIn'); // ✅ Keeps all user data
+  // PHP session will be destroyed on sign-in page or via logout.php later
   logoutModal.style.display = 'none';
-  window.location.href = 'signin.html'; // Redirect to sign-in page
+  window.location.href = 'signin.html';
 });
 
-// Close modal if clicking outside content
 logoutModal.addEventListener('click', (e) => {
   if (e.target === logoutModal) {
     logoutModal.style.display = 'none';
   }
 });
 
+// ===== LIMIT WARNING MODAL =====
 const limitWarningModal = document.getElementById('limit-warning-modal');
 const closeWarningModalBtn = document.getElementById('close-warning-modal');
 const excessAmountEl = document.getElementById('excess-amount');
 const limitValueDisplayEl = document.getElementById('limit-value-display');
 
 function showLimitExceededWarning() {
-  const data = spendingData[currentDate];
-  const excess = data.total - data.dailyLimit;
+  const excess = spendingData.total - userData.dailyLimit;
   excessAmountEl.textContent = excess.toFixed(0);
-  limitValueDisplayEl.textContent = data.dailyLimit.toFixed(0);
+  limitValueDisplayEl.textContent = userData.dailyLimit.toFixed(0);
   limitWarningModal.style.display = 'flex';
 }
 
@@ -503,17 +441,61 @@ function hideLimitExceededWarning() {
   limitWarningModal.style.display = 'none';
 }
 
-// Close warning modal
 closeWarningModalBtn?.addEventListener('click', () => {
   hideLimitExceededWarning();
 });
 
-// Close if clicking outside
 limitWarningModal?.addEventListener('click', (e) => {
   if (e.target === limitWarningModal) {
     hideLimitExceededWarning();
   }
 });
 
-// Initialize
-initUI();
+// ===== MESSAGE MODAL (must exist in HTML) =====
+function showMessageModal(title, message) {
+  const modal = document.getElementById('message-modal');
+  if (!modal) {
+    alert(`${title}: ${message}`);
+    return;
+  }
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-text').textContent = message;
+  modal.style.display = 'flex';
+}
+
+const modalClose = document.getElementById('modal-close');
+if (modalClose) {
+  modalClose.onclick = () => document.getElementById('message-modal').style.display = 'none';
+}
+
+// ===== FETCH USER DATA FROM SERVER =====
+async function fetchUserData(date) {
+  try {
+    const res = await fetch(`fetch-user-data.php?date=${encodeURIComponent(date)}`);
+    const data = await res.json();
+    
+    if (!data.success) {
+      showMessageModal('Error', data.error || 'Failed to load data.');
+      return false;
+    }
+
+    userData = data.user;
+    spendingData = data.spending;
+    currentDate = date;
+    datePicker.value = date;
+    
+    initUI();
+    return true;
+  } catch (err) {
+    console.error('Fetch error:', err);
+    showMessageModal('Network Error', 'Could not load your data.');
+    return false;
+  }
+}
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+  currentDate = getCurrentDate();
+  datePicker.value = currentDate;
+  fetchUserData(currentDate);
+});

@@ -28,12 +28,18 @@ const previewPlaceholder = document.getElementById('preview-placeholder');
 const imageUploadBtn = document.getElementById('image-upload-btn');
 const profileImageInput = document.getElementById('profile-image-input');
 
-// ===== NEW: Server-based data model =====
-let userData = null;
-let spendingData = null; // { date, total, byCategory }
-let currentDate = null;
+// ===== NEW: Delete Confirmation Modal Elements =====
+const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+const cancelDeleteBtn = document.getElementById('cancel-delete');
+const confirmDeleteBtn = document.getElementById('confirm-delete');
+const deleteCategoryLabel = document.getElementById('delete-category-label');
 
-// Get current date in YYYY-MM-DD
+// ===== Server-based data model =====
+let userData = null;
+let spendingData = null;
+let currentDate = null;
+let categoryToDelete = null; // Track which category is being deleted
+
 const getCurrentDate = () => {
   const now = new Date();
   return now.toISOString().split('T')[0];
@@ -55,31 +61,23 @@ function initProfileImage() {
   } else {
     const firstLetter = userData.name.charAt(0).toUpperCase();
     previewPlaceholder.textContent = firstLetter;
-    sidebarAvatar.style.background = `url('https://via.placeholder.com/60/FF69B4/ffffff?text=${firstLetter}') center/cover no-repeat`;
+    sidebarAvatar.style.background = `url('https://via.placeholder.com/60/FF69B4/ffffff?text=  ${firstLetter}') center/cover no-repeat`;
   }
 }
 
 // Initialize UI from server data
 function initUI() {
-  // Set profile name
   profileNameEl.textContent = userData.name;
-
-  // Set daily limit (from user profile)
   dailyLimitValueEl.textContent = userData.dailyLimit.toFixed(0);
-
-  // Update spending display
+  document.getElementById('limit-value-display').textContent = userData.dailyLimit.toFixed(0);
   updateSpendingDisplay();
-
-  // Draw charts
   drawPieChart();
   drawBarGraph();
   renderBreakdownList();
-  
-  // Initialize profile image
   initProfileImage();
 }
 
-// Handle profile image upload (client-side preview only)
+// Handle profile image upload
 imageUploadBtn.addEventListener('click', () => {
   profileImageInput.click();
 });
@@ -98,7 +96,7 @@ profileImageInput.addEventListener('change', (e) => {
   }
 });
 
-// Render breakdown list
+// ✅ UPDATED: Render breakdown list with delete capability
 function renderBreakdownList() {
   breakdownList.innerHTML = '';
   
@@ -110,21 +108,26 @@ function renderBreakdownList() {
     item.innerHTML = `
       <div class="color-dot" style="background: ${cat.color};"></div>
       <div>${cat.label} - ₱<span>${value.toFixed(0)}</span> (${percentage}%)</div>
-      <button class="remove-btn" data-category="${cat.key}">✕</button>
+      <button class="remove-btn" data-category="${cat.key}" ${value <= 0 ? 'disabled' : ''}>✕</button>
     `;
     breakdownList.appendChild(item);
-  });
-  
-  // Add event listeners to remove buttons (optional: add delete API later)
-  document.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const category = e.target.getAttribute('data-category');
-      showMessageModal('Info', 'Removing spending is not yet supported in online mode.');
-    });
+
+    // Attach delete listener only if there's spending
+    if (value > 0) {
+      const removeBtn = item.querySelector('.remove-btn');
+      removeBtn.addEventListener('click', () => openDeleteConfirm(cat));
+    }
   });
 }
 
-// Show profile modal
+// ✅ NEW: Open delete confirmation modal
+function openDeleteConfirm(category) {
+  categoryToDelete = category;
+  deleteCategoryLabel.textContent = category.label;
+  deleteConfirmModal.classList.remove('hidden');
+}
+
+// Close profile modal
 profileBtn.addEventListener('click', () => {
   document.getElementById('profile-name-input').value = userData.name || '';
   document.getElementById('profile-gender-input').value = userData.gender || '';
@@ -133,16 +136,15 @@ profileBtn.addEventListener('click', () => {
   document.getElementById('profile-email-input').value = userData.email || '';
   document.getElementById('profile-address-input').value = userData.address || '';
   
-  initProfileImage(); // Refresh preview
+  initProfileImage();
   profileModal.style.display = 'flex';
 });
 
-// Close profile modal
 closeProfileModal.addEventListener('click', () => {
   profileModal.style.display = 'none';
 });
 
-// Save profile (now synced with update-profile.php)
+// Save profile
 saveProfileBtn.addEventListener('click', async () => {
   const name = document.getElementById('profile-name-input').value.trim();
   const gender = document.getElementById('profile-gender-input').value.trim();
@@ -151,14 +153,12 @@ saveProfileBtn.addEventListener('click', async () => {
   const email = document.getElementById('profile-email-input').value.trim();
   const address = document.getElementById('profile-address-input').value.trim();
 
-  // Validation
   if (!name) {
     showMessageModal('Error', 'Name is required.');
     return;
   }
 
   try {
-    // Send data to server
     const response = await fetch('update-profile.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -168,7 +168,6 @@ saveProfileBtn.addEventListener('click', async () => {
     const result = await response.json();
 
     if (result.success) {
-      // Update local data
       userData.name = name;
       userData.gender = gender;
       userData.birthday = birthday;
@@ -176,11 +175,17 @@ saveProfileBtn.addEventListener('click', async () => {
       userData.email = email;
       userData.address = address;
 
-      // Update UI
       profileNameEl.textContent = userData.name;
       initProfileImage();
       profileModal.style.display = 'none';
-      showMessageModal('Success', 'Profile updated successfully!');
+
+      const successModal = document.getElementById('success-modal');
+      if (successModal) {
+        successModal.querySelector('.success-title').textContent = 'Profile Saved!';
+        successModal.querySelector('.success-message').textContent = 'Your changes have been saved successfully.';
+        successModal.style.display = 'flex';
+        setTimeout(() => successModal.style.display = 'none', 2000);
+      }
     } else {
       showMessageModal('Error', result.message || 'Failed to update profile.');
     }
@@ -196,25 +201,48 @@ dailyLimitInPie.addEventListener('click', () => {
   dailyLimitModal.style.display = 'flex';
 });
 
-// Close daily limit modal
 closeDailyLimitModal.addEventListener('click', () => {
   dailyLimitModal.style.display = 'none';
 });
 
-// Update daily limit (client-side only for now)
-updateDailyLimitBtn.addEventListener('click', () => {
+// Update daily limit
+updateDailyLimitBtn.addEventListener('click', async () => {
   const newLimit = parseFloat(dailyLimitInput.value);
   if (isNaN(newLimit) || newLimit < 0) {
-    alert('Please enter a valid daily limit.');
+    showMessageModal('Error', 'Please enter a valid daily limit.');
     return;
   }
 
-  userData.dailyLimit = newLimit;
-  dailyLimitValueEl.textContent = userData.dailyLimit.toFixed(0);
-  dailyLimitModal.style.display = 'none';
+  try {
+    const response = await fetch('update-daily-limit.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ daily_limit: newLimit })
+    });
 
-  // Re-check limit warning
-  updateSpendingDisplay();
+    const result = await response.json();
+
+    if (result.success) {
+      userData.dailyLimit = newLimit;
+      dailyLimitValueEl.textContent = newLimit.toFixed(0);
+      document.getElementById('limit-value-display').textContent = newLimit.toFixed(0);
+      updateSpendingDisplay();
+      dailyLimitModal.style.display = 'none';
+
+      const successModal = document.getElementById('success-modal');
+      if (successModal) {
+        successModal.querySelector('.success-title').textContent = 'Daily Limit Updated!';
+        successModal.querySelector('.success-message').textContent = `Your new limit is ₱${newLimit.toFixed(0)}.`;
+        successModal.style.display = 'flex';
+        setTimeout(() => successModal.style.display = 'none', 2000);
+      }
+    } else {
+      showMessageModal('Error', result.message || 'Failed to update daily limit.');
+    }
+  } catch (err) {
+    console.error('Daily limit update error:', err);
+    showMessageModal('Error', 'Could not connect to server.');
+  }
 });
 
 // Show add spending modal
@@ -224,22 +252,20 @@ addBtn.addEventListener('click', () => {
   addModal.style.display = 'flex';
 });
 
-// Close add spending modal
 closeAddModal.addEventListener('click', () => {
   addModal.style.display = 'none';
 });
 
-// Save spending to server
+// Save spending
 saveBtn.addEventListener('click', async () => {
   const amount = parseFloat(amountInput.value);
-  const categoryKey = categorySelect.value; // e.g., "Food"
+  const categoryKey = categorySelect.value;
 
   if (isNaN(amount) || amount <= 0 || !categoryKey) {
-    alert('Please enter a valid amount and select a category.');
+    showMessageModal('Error', 'Please enter a valid amount and select a category.');
     return;
   }
 
-  // Find category ID from key
   const selectedCategory = categories.find(cat => cat.key === categoryKey);
   if (!selectedCategory) {
     showMessageModal('Error', 'Invalid category selected.');
@@ -252,7 +278,7 @@ saveBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         amount, 
-        category_id: selectedCategory.id, // 👈 Send ID, not name
+        category_id: selectedCategory.id,
         spending_date: currentDate 
       })
     });
@@ -271,6 +297,7 @@ saveBtn.addEventListener('click', async () => {
   }
 });
 
+// Update spending display (limit warning, totals)
 function updateSpendingDisplay() {
   const total = spendingData.total;
   const limit = userData.dailyLimit;
@@ -331,19 +358,18 @@ function drawPieChart() {
     startAngle = endAngle;
   }
 
-  // Center circle
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
   ctx.fillStyle = 'rgba(255,255,255,0.2)';
   ctx.fill();
 
-  // Total in center
   ctx.fillStyle = 'white';
   ctx.font = 'bold 24px Poppins';
   ctx.textAlign = 'center';
   ctx.fillText(`₱${total.toFixed(0)}`, centerX, centerY + 8);
 }
 
+// Draw bar graph
 function drawBarGraph() {
   barsContainer.innerHTML = '';
 
@@ -387,6 +413,16 @@ window.addEventListener('click', (e) => {
   if (e.target === profileModal) profileModal.style.display = 'none';
   if (e.target === addModal) addModal.style.display = 'none';
   if (e.target === dailyLimitModal) dailyLimitModal.style.display = 'none';
+  if (e.target === deleteConfirmModal) {
+    deleteConfirmModal.classList.add('hidden');
+    categoryToDelete = null;
+  }
+  if (e.target === logoutModal) logoutModal.style.display = 'none';
+  if (e.target === limitWarningModal) limitWarningModal.style.display = 'none';
+  const successModal = document.getElementById('success-modal');
+  if (successModal && e.target === successModal) {
+    successModal.style.display = 'none';
+  }
 });
 
 // Apply saved theme
@@ -413,15 +449,8 @@ cancelLogoutBtn.addEventListener('click', () => {
 });
 
 confirmLogoutBtn.addEventListener('click', () => {
-  // PHP session will be destroyed on sign-in page or via logout.php later
   logoutModal.style.display = 'none';
   window.location.href = 'signin.html';
-});
-
-logoutModal.addEventListener('click', (e) => {
-  if (e.target === logoutModal) {
-    logoutModal.style.display = 'none';
-  }
 });
 
 // ===== LIMIT WARNING MODAL =====
@@ -445,13 +474,7 @@ closeWarningModalBtn?.addEventListener('click', () => {
   hideLimitExceededWarning();
 });
 
-limitWarningModal?.addEventListener('click', (e) => {
-  if (e.target === limitWarningModal) {
-    hideLimitExceededWarning();
-  }
-});
-
-// ===== MESSAGE MODAL (must exist in HTML) =====
+// ===== MESSAGE MODAL (fallback) =====
 function showMessageModal(title, message) {
   const modal = document.getElementById('message-modal');
   if (!modal) {
@@ -460,13 +483,58 @@ function showMessageModal(title, message) {
   }
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-text').textContent = message;
-  modal.style.display = 'flex';
+  modal.classList.add('show');
 }
 
 const modalClose = document.getElementById('modal-close');
 if (modalClose) {
-  modalClose.onclick = () => document.getElementById('message-modal').style.display = 'none';
+  modalClose.addEventListener('click', () => {
+    const modal = document.getElementById('message-modal');
+    if (modal) modal.classList.remove('show');
+  });
 }
+
+// ✅ NEW: Handle delete confirmation
+cancelDeleteBtn?.addEventListener('click', () => {
+  deleteConfirmModal.classList.add('hidden');
+  categoryToDelete = null;
+});
+
+confirmDeleteBtn?.addEventListener('click', async () => {
+  if (!categoryToDelete) return;
+
+  try {
+    const response = await fetch('delete-spending.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category_id: categoryToDelete.id,
+        spending_date: currentDate
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      await fetchUserData(currentDate); // Refresh UI
+      deleteConfirmModal.classList.add('hidden');
+      categoryToDelete = null;
+
+      const successModal = document.getElementById('success-modal');
+      if (successModal) {
+        successModal.querySelector('.success-title').textContent = 'Spending Removed!';
+        successModal.querySelector('.success-message').textContent = `All spending for "${categoryToDelete?.label}" has been deleted.`;
+        successModal.style.display = 'flex';
+        setTimeout(() => successModal.style.display = 'none', 2000);
+      }
+    } else {
+      showMessageModal('Error', result.message || 'Failed to delete spending.');
+    }
+  } catch (err) {
+    console.error('Delete error:', err);
+    showMessageModal('Error', 'Could not connect to server.');
+  }
+});
 
 // ===== FETCH USER DATA FROM SERVER =====
 async function fetchUserData(date) {
@@ -483,7 +551,6 @@ async function fetchUserData(date) {
     spendingData = data.spending;
     currentDate = date;
     datePicker.value = date;
-    
     initUI();
     return true;
   } catch (err) {

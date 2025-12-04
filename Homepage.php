@@ -207,7 +207,7 @@ if (!isset($_SESSION['user_id'])) {
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div id="delete-confirm-modal" class="modal hidden">
+  <div id="delete-confirm-modal" class="modal" style="display: none;">
     <div class="modal-content">
       <h3>Confirm Deletion</h3>
       <p>Are you sure you want to remove all spending for <strong id="delete-category-label">this category</strong> today?</p>

@@ -1,9 +1,11 @@
 <?php
+session_start(); // Must be first
+
 // Database configuration
 $host = 'localhost';
-$dbname = 'spending_tracker';  // ✅ Your DB name
-$username = 'root';            // Adjust if needed (e.g., 'kagura' in some setups)
-$password = '';                // Default for XAMPP; change if you set one
+$dbname = 'spending_tracker';
+$username = 'root';
+$password = '';
 
 $message_sent = false;
 $error = '';
@@ -23,9 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // ✅ Insert into 'contactus' table
-            $stmt = $pdo->prepare("INSERT INTO contactus (name, email, message) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $email, $message]);
+            // Get user_id from session if logged in, otherwise NULL
+            $user_id = $_SESSION['user_id'] ?? null;
+
+            // Insert into contactus WITH user_id
+            $stmt = $pdo->prepare("INSERT INTO contactus (user_id, name, email, message) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$user_id, $name, $email, $message]);
 
             $message_sent = true;
         } catch (PDOException $e) {
@@ -51,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     <div class="logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">Spending Tracker</div>
     <div class="nav-links">
       <a href="#home">Home</a>
-      <a href="#about">About</a>
+      <<a href="#about">About</a>
       <a href="#features">Features</a>
       <a href="#contact">Contact</a>
     </div>
@@ -113,8 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
       <div class="modal" id="success-modal" style="display: flex;">
         <div class="modal-content">
           <h3>Message Sent!</h3>
-          <p>Thank you, <?php echo htmlspecialchars($_POST['name']); ?>! We’ll get back to you soon.</p>
-          <button class="btn" onclick="document.getElementById('success-modal').style.display='none'; document.getElementById('contact-form').reset();">Close</button>
+          <p>Thank you, <?php echo htmlspecialchars($_POST['name'] ?? 'there'); ?>! We’ll get back to you soon.</p>
+          <button class="btn" onclick="document.getElementById('success-modal').style.display='none'; document.getElementById('contact-form')?.reset();">Close</button>
         </div>
       </div>
     <?php elseif ($error): ?>
@@ -125,8 +130,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
 
     <form class="contact-form" method="POST" id="contact-form">
       <div class="form-row">
-        <input type="text" name="name" id="name" placeholder="Name" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>">
-        <input type="email" name="email" id="email" placeholder="Email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+        <input type="text" name="name" id="name" placeholder="Name" required 
+               value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>">
+        <input type="email" name="email" id="email" placeholder="Email" required 
+               value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
       </div>
       <textarea name="message" id="message" placeholder="Message" required><?php echo isset($_POST['message']) ? htmlspecialchars($_POST['message']) : ''; ?></textarea>
       <button type="submit" class="btn">Send Message</button>
@@ -137,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     </p>
   </section>
 
-  <!-- Success Modal (optional fallback) -->
+  <!-- Success Modal (fallback) -->
   <div class="modal" id="success-modal" style="display:none;">
     <div class="modal-content">
       <h3>Message Sent!</h3>
@@ -148,14 +155,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
 
   <script src="index.js"></script>
 
-  <!-- Simple inline script to close modal if needed -->
   <script>
     document.getElementById('close-modal')?.addEventListener('click', () => {
       document.getElementById('success-modal').style.display = 'none';
       document.getElementById('contact-form')?.reset();
     });
 
-    // Optional: close modal on outside click
     window.onclick = function(event) {
       const modal = document.getElementById('success-modal');
       if (event.target === modal) {

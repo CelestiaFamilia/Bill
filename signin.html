@@ -1,60 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="signin.css">
-</head>
-<body>
-  <div class="card">
-    <!-- Header with Back Button -->
-    <div class="header-container">
-      <a href="index.php" class="back-btn">←</a>
-      <h1 class="header">Sign In</h1>
-    </div>
-
-    <div class="field">
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="your@email.com">
-    </div>
-    <div class="field password-field">
-      <label for="password">Password</label>
-      <div class="password-wrapper">
-        <input type="password" id="password" placeholder="••••••••">
-        <button type="button" class="toggle-password" id="toggle-password">👁️</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="signin.css" />
+  </head>
+  <body>
+    <div class="card">
+      <!-- Header with Back Button -->
+      <div class="header-container">
+        <a href="index.php" class="back-btn">←</a>
+        <h1 class="header">Sign In</h1>
       </div>
-      <a href="#" id="forgot-password" class="forgot-link">Forgot password?</a>
-    </div>
-    
-    <button id="signin-btn">Sign In</button>
-    <button class="signup-btn" onclick="window.location.href='signup.html'">Create Account</button>
-  </div>
 
-  <!-- Message Modal -->
-  <div class="modal" id="message-modal">
-    <div class="modal-content">
-      <h3 id="modal-title">Title</h3>
-      <p id="modal-text">Message here.</p>
-      <button class="btn" id="modal-close">Close</button>
-    </div>
-  </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="your@email.com" />
+      </div>
+      <div class="field password-field">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="••••••••" />
+          <button type="button" class="toggle-password" id="toggle-password">
+            👁️
+          </button>
+        </div>
+        <a href="#" id="forgot-password" class="forgot-link"
+          >Forgot password?</a
+        >
+      </div>
 
-  <!-- Reset Password Modal (Direct Update) -->
-  <div class="modal" id="reset-modal">
-    <div class="modal-content">
-      <h3>Reset Password</h3>
-      <p>Enter your email and a new password.</p>
-      
-      <input type="email" id="reset-email" placeholder="your@email.com" style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
-      <input type="password" id="new-password" placeholder="New password" style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
-      
-      <button class="btn" id="confirm-reset">Update Password</button>
-      <button class="btn cancel-btn" id="cancel-reset">Cancel</button>
+      <button id="signin-btn">Sign In</button>
+      <button class="signup-btn" onclick="window.location.href='signup.html'">
+        Create Account
+      </button>
     </div>
-  </div>
 
-  <script src="signin.js"></script>
-</body>
+    <!-- Message Modal -->
+    <div class="modal" id="message-modal">
+      <div class="modal-content">
+        <h3 id="modal-title">Title</h3>
+        <p id="modal-text">Message here.</p>
+        <button class="btn" id="modal-close">Close</button>
+      </div>
+    </div>
+
+    <!-- Reset Password Modal (Direct Update) -->
+    <div class="modal" id="reset-modal">
+      <div class="modal-content">
+        <h3>Reset Password</h3>
+        <p>Enter your email and a new password.</p>
+
+        <input
+          type="email"
+          id="reset-email"
+          placeholder="your@email.com"
+          required
+          style="
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+          "
+        />
+        <input
+          type="text"
+          id="otp"
+          placeholder="OTP"
+          maxlength="6"
+          inputmode="numeric"
+          oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+          required
+          style="
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+          "
+        />
+        <input
+          type="password"
+          id="new-password"
+          placeholder="New password"
+          required
+          style="
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+          "
+        />
+        <!-- Trigger button -->
+        <div style="text-align: right">
+          <a
+            href="#"
+            id="send-code"
+            class="forgot-password"
+            style="color: white; font-size: large"
+          >
+            Send Code
+          </a>
+        </div>
+        <br />
+        <button class="btn" id="confirm-reset">Update Password</button>
+        <button class="btn cancel-btn" id="cancel-reset">Cancel</button>
+      </div>
+    </div>
+
+    <div id="otp-modal" style="display: none">
+      <div class="modal-content">
+        <h2>OTP</h2>
+        <h3>OTP Code: <span id="otp-code"></span></h3>
+        <button id="close-otp">Close</button>
+      </div>
+    </div>
+
+    <script src="signin.js"></script>
+  </body>
 </html>

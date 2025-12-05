@@ -1,5 +1,6 @@
 <?php
-session_start(); // Must be first
+// No session needed for this logic — but we'll keep it in case you want to use it later
+session_start();
 
 // Database configuration
 $host = 'localhost';
@@ -25,17 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // Get user_id from session if logged in, otherwise NULL
-            $user_id = $_SESSION['user_id'] ?? null;
+            // 🔍 Step 1: Look up email in the users table
+            $user_id = null; // default
+            $stmt_lookup = $pdo->prepare("SELECT user_id FROM users WHERE email = ?");
+            $stmt_lookup->execute([$email]);
+            $user = $stmt_lookup->fetch(PDO::FETCH_ASSOC);
 
-            // Insert into contactus WITH user_id
-            $stmt = $pdo->prepare("INSERT INTO contactus (user_id, name, email, message) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$user_id, $name, $email, $message]);
+            if ($user) {
+                $user_id = (int)$user['user_id'];
+            }
+
+            // 🔍 Step 2: Insert into contactus
+            $stmt_insert = $pdo->prepare("INSERT INTO contactus (user_id, name, email, message) VALUES (?, ?, ?, ?)");
+            $stmt_insert->execute([$user_id, $name, $email, $message]);
 
             $message_sent = true;
         } catch (PDOException $e) {
             $error = "Failed to send message. Please try again later.";
-            // Optional: log error → error_log($e->getMessage());
+            // Optional: error_log($e->getMessage());
         }
     }
 }
@@ -56,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     <div class="logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">Spending Tracker</div>
     <div class="nav-links">
       <a href="#home">Home</a>
-      <<a href="#about">About</a>
+      <a href="#about">About</a>
       <a href="#features">Features</a>
       <a href="#contact">Contact</a>
     </div>
@@ -154,13 +162,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
   </div>
 
   <script src="index.js"></script>
-
   <script>
     document.getElementById('close-modal')?.addEventListener('click', () => {
       document.getElementById('success-modal').style.display = 'none';
       document.getElementById('contact-form')?.reset();
     });
-
     window.onclick = function(event) {
       const modal = document.getElementById('success-modal');
       if (event.target === modal) {
